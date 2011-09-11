@@ -1,0 +1,102 @@
+sixthgear:          235 x 60
+cosmologician:      271 x 69
+
+
+plot
+wild magic zone
+obtain holy macguffins
+    - which provide degrees of control
+
+
+random mutation
+    - when ?
+        - items
+        - staying in an environment too long
+            - increased knowledge of the matter with macguffins
+
+    - how?
+        - anatomical slots
+            - head
+                - horns/antenna
+                - eyes
+                - jaw
+
+            - torso
+            - left arm[]
+            - right arm[]
+            - legs
+
+            nondefault
+            - back (spines, //wings)
+            - tail
+
+    - mechanical effects
+        - can give new attacks
+        - can provide passive bonuses
+            - global +attack
+            - global +accuracy
+            - global +proc chance
+
+            - hp
+            - armor
+            - evasion
+
+            - thorns / proc thorns
+
+
+    - combat options
+        - an attack per limb with combat
+            - special attacks have cooldowns
+            - damage/accuracy
+            - procs
+                - critical damage
+                - status effects
+                    - poison damage
+                    - crippling limb
+                        - magikarp flail
+                    - stat downs
+
+    
+    - attack characteristics
+        - speed (tick system)
+        - damage
+        - accuracy
+        - possible procs
+        - possible cooldown
+    
+    - character stats
+       
+    - ALPHA STRIKE?! 
+
+    
+
+- world
+    - exploration
+        - divided into 'tiles'
+        - monsters at the 'door'
+            - or maybe events / loot / etc
+
+        - d2 tile piecing together
+
+    - interaction
+        - area theming
+
+        - pick up items
+            - as chests / loot / etc
+            - environmentally themed "potions"
+
+combat
+    - DQ style?
+
+    - enemies?
+
+
+
+
+game states
+    - title
+    - exploration
+    - combat
+    - victory
+
+    -dialog

@@ -7,6 +7,7 @@ package.
 '''
 
 import term
+import event
 import game
 
 import logging
@@ -16,6 +17,7 @@ def main():
     log.debug('Starting up')
     term.init()
     try:
+        event.fire('setup')
         game.start()
 
     except game.GameShutdown:
