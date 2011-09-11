@@ -1,4 +1,4 @@
-import term as T
+import term
 
 class Buffer:
     def __init__(self, width, height, data, x=0, y=0, children=None):
