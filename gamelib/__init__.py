@@ -14,3 +14,4 @@ logger.setLevel(logging.DEBUG)
 import event
 
 import title
+import battle

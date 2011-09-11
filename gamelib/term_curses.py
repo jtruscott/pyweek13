@@ -71,3 +71,5 @@ def settitle(title):
     #gibberish, i tell you
     sys.stdout.write("\x1b]2;%s\x07" % title)
 
+def setcursortype(i):
+    C.curs_set(i)

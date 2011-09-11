@@ -24,6 +24,7 @@ WHITE = 15
 defaultcolor = W.gettextinfo()[4]
 def init():
     W.textmode()
+    setcursortype(0)
 
 
 
@@ -46,7 +47,7 @@ def reset():
 
 def resize(h, w):
     import subprocess
-    subprocess.call(['mode', 'con', 'lines=%i' % (h+1), 'cols=%i' % w], shell=True)
+    subprocess.call(['mode', 'con', 'lines=%i' % h, 'cols=%i' % w], shell=True)
         
     
 def restore():
@@ -61,3 +62,26 @@ def restore():
 def settitle(title):
     W.settitle(title)
 
+def setcursortype(i):
+    W.setcursortype(i)
+
+def draw_buffer(buf, x, y):
+    if buf.dirty:
+        #generate a wconio buffer
+        buf._text = render_buffer(buf)
+        buf.dirty = False
+    
+    W.puttext(x, y,
+            x + buf.width-1,
+            y + buf.height-1,
+            buf._text
+    )
+
+def render_buffer(buf):
+    text = []
+    for row in buf.data:
+        for fg, bg, ch in row:
+             color = chr(fg + (bg << 4))
+             text.append(ch)
+             text.append(color)
+    return ''.join(text)
