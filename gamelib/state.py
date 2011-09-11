@@ -1,4 +1,5 @@
 import event
+from player import Player
 
 import logging
 log = logging.getLogger('state')
@@ -9,6 +10,10 @@ class config:
     #configuration defaults, overridden by config.json
     width = 120
     height = 60
+
+#the game's player
+player = None
+
 
 @event.on('setup')
 def load_config():
@@ -25,7 +30,9 @@ def load_config():
         log.debug('No config file exists; using default settings')
 
 def new_state():
-    pass
+    global player
+    player = Player()
+
 def load_state():
     pass
 def save_state():

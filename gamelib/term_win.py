@@ -45,7 +45,6 @@ def reset():
     W.textmode()
 
 def resize(h, w):
-    log.debug("resizing to h=%r,w=%r", h, w)
     import subprocess
     subprocess.call(['mode', 'con', 'lines=%i' % (h+1), 'cols=%i' % w], shell=True)
         
