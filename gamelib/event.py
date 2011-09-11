@@ -12,7 +12,7 @@ def on(event):
 
 def fire(event, *args, **kwargs):
     if event not in listeners:
-        log.warn("firing '%s', which has no listeners", event)
+        log.warn("firing '%s', which has no listeners!", event)
         return
     log.debug("firing '%s'", event)    
     for f in listeners[event]:

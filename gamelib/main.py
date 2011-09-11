@@ -19,13 +19,16 @@ def main():
     try:
         event.fire('setup')
         game.start()
-
+        
     except game.GameShutdown:
         term.reset()
     except KeyboardInterrupt:
         term.reset()
         raise
-    
+    except Exception, e:
+        log.exception(e)
+        raise
+
     finally:
         log.debug('Shutting down')
         logging.shutdown()
