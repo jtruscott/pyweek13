@@ -14,7 +14,7 @@ def setup_battle_ui():
                                 border_fg=term.YELLOW,
                                 draw_bottom=False
     )
-    action_text = screen.Text("oh my god, it's a mutant! (%i)", x=1, y=5, center_to=action_bar.width-2)
+    action_text = screen.RichText("oh my god, it's a <RED>mutant!</> (<GREEN>%i</>)", x=1, y=5, center_to=action_bar.width-2)
     action_bar.children.append(action_text)
 
 @event.on('battle.draw')

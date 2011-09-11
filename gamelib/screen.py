@@ -1,4 +1,8 @@
+import re
 import term
+
+import logging
+log = logging.getLogger('screen')
 
 class Buffer:
     """
@@ -41,7 +45,7 @@ class Text(Buffer):
         self.update_data()
 
     def set(self, message):
-        self.message = message
+        self.message = self.base_message = message
         self.update_data()
     
     def format(self, fmt):
@@ -58,6 +62,47 @@ class Text(Buffer):
         self.width = len(data)
         self.data = [data]
         self.dirty = True
+
+class RichText(Text):
+    colorRE = re.compile(r'([^<]*)<([\w]*|/)>')
+    
+    def update_data(self):
+        data = []
+        message_parts, total_len = self.parse()
+        if self.center_to:
+            data.extend([(self.fg, self.bg, ' ')]*((self.center_to - total_len)/2))
+        
+        for part_color, part_text in message_parts:
+            for c in part_text:
+                data.append((part_color, self.bg, c))
+
+        if self.center_to:
+            data.extend([(self.fg, self.bg, ' ')]*((self.center_to - total_len)/2))
+
+        self.width = len(data)
+        self.data = [data]
+        self.dirty = True
+
+    def parse(self):
+        raw_msg = self.message.rstrip('\n')
+        raw_parts = filter(None, self.colorRE.split(raw_msg))
+        message_parts = []
+        total_len = 0
+        color_stack = [term.LIGHTGREY]
+        for part in raw_parts:
+            if part == '/':
+                #go back a color
+                color_stack.pop()
+            elif hasattr(term, part):
+                #push a new color
+                color_stack.append(getattr(term, part))
+            else:
+                #it's a text component
+                message_parts.append((color_stack[-1], part))
+                total_len += len(part)
+
+        log.debug("len: %r parts: %r", total_len, message_parts)
+        return message_parts, total_len
 
 
 #----------------------------------------------------------------------
