@@ -27,6 +27,13 @@ def setup_message_ui():
     M.scroll_offset = 0
     M.text_height = M.message_zone.height - 2
 
+    zone_title = screen.Text(
+                                "[ Messages ]",
+                                fg=term.LIGHTBLUE,
+    )
+    zone_title.x = (M.message_zone.width - len(zone_title.message)) / 2
+    M.message_zone.children.append(zone_title)
+
 @event.on('battle.tick')
 def tmp():
     add_message("oh my god!")

@@ -22,18 +22,19 @@ class Buffer:
         self.y = y
         self.children = children or []
 
-    def draw(self, xoff=0, yoff=0):
+    def draw(self, xoff=0, yoff=0, dirty=False):
         #xoff and yoff are screen offsets from our parent.
         xoff = xoff + self.x
         yoff = yoff + self.y
+        dirty = dirty or self.dirty or term.all_dirty
 
         #put ourselves on the screen
-        if self.dirty or term.all_dirty:
+        if dirty:
             term.draw_buffer(self, xoff, yoff)
 
         #have our children do similar
         for child in self.children:
-            child.draw(xoff, yoff)
+            child.draw(xoff, yoff, dirty)
 
 class Text(Buffer):
     def __init__(self, message, fg=term.WHITE, bg=term.BLACK, center_to=None, **kwargs):
