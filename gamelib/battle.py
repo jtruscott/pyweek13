@@ -1,13 +1,14 @@
-import screen, event, state, term
+import screen, event, state, term, player
 
 import logging
 log = logging.getLogger('battle')
 i = 0
+enemy = None
 
 @event.on('setup')
 def setup_battle_ui():
 
-    global action_bar, action_text, enemy_zone, message_zone
+    global action_bar, action_text, enemy_zone
     conf = state.config
     action_height = conf.height - conf.viewport_height
     action_bar = screen.make_box(conf.width, action_height,
@@ -30,7 +31,24 @@ def draw_battle():
     
 @event.on('battle.start')
 def start_battle():
-    pass
+    global enemy
+    enemy = player.Enemy()
+    describe_enemy()
+
+def describe_enemy():
+    enemy_zone.children = [
+        screen.RichText("Before you is a %s with %i hp!" % (enemy.name, enemy.hp), x=1, y=2, center_to=enemy_zone.width-2),
+    ]
+    y = 4
+    for slot in enemy.slots:
+        if enemy.parts[slot]:
+            part = enemy.parts[slot]
+            enemy_zone.children.append(screen.RichText(
+                "it's %s: %s" % (slot, part.description),
+                x=1,y=y, center_to=enemy_zone.width-2
+            ))
+            y += 1
+    enemy_zone.dirty = True
 
 @event.on('battle.prompt')
 def battle_prompt():

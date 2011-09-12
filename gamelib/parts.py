@@ -41,6 +41,8 @@ parts = {
     ],
     'body': [
         Part("Human Torso", "A perfectly normal human torso"),
+        Part("Strong Human Torso", "A muscular human torso", hp=1),
+        Part("Scaled Torso", "A torso covered in thick, durable scales", armor=1, hp=2),
     ],
     'legs': [
         Part("Human Legs", "A perfectly normal pair of human legs"),
@@ -50,6 +52,6 @@ parts = {
 
     'limbs': [
         Part("Human Arm", "A perfectly normal human arm", attack=PunchAttack()),
-        Part("Bulky Human Arm", "A very strong human arm", attack=PunchAttack(bonus=1)),
+        Part("Strong Human Arm", "A very strong human arm", attack=PunchAttack(bonus=1)),
     ]
 }

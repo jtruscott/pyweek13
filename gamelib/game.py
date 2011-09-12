@@ -11,6 +11,7 @@ def start():
 
     state.new_state()
     state.mode = 'battle'
+    event.fire('battle.start')
 
     while state.running:
         event.fire('%s.tick' % state.mode)
