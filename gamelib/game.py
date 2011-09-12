@@ -18,3 +18,8 @@ def start():
         event.fire('%s.prompt' % state.mode)
         event.fire('flip')
     return
+
+@event.on('ctrl-c')
+def ctrlc():
+    state.running = False
+    raise GameShutdown()

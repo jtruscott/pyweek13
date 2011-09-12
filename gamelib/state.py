@@ -11,6 +11,9 @@ class config:
     width = 120
     height = 60
 
+    viewport_width = 72
+    viewport_height = 48
+
 #the game's player
 player = None
 

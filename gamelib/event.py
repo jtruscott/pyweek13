@@ -14,6 +14,6 @@ def fire(event, *args, **kwargs):
     if event not in listeners:
         log.warn("firing '%s', which has no listeners!", event)
         return
-    log.debug("firing '%s'", event)    
+    log.debug("firing '%s' (%i listeners)", event, len(listeners[event]))
     for f in listeners[event]:
         f(*args, **kwargs)

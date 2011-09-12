@@ -28,7 +28,8 @@ class Buffer:
         yoff = yoff + self.y
 
         #put ourselves on the screen
-        term.draw_buffer(self, xoff, yoff)
+        if self.dirty or term.all_dirty:
+            term.draw_buffer(self, xoff, yoff)
 
         #have our children do similar
         for child in self.children:
@@ -101,7 +102,7 @@ class RichText(Text):
                 message_parts.append((color_stack[-1], part))
                 total_len += len(part)
 
-        log.debug("len: %r parts: %r", total_len, message_parts)
+        #log.debug("len: %r parts: %r", total_len, message_parts)
         return message_parts, total_len
 
 
@@ -111,10 +112,20 @@ def make_box(width, height, x=0, y=0,
             border_fg=term.WHITE, border_bg=term.BLACK,
             interior_fg=term.WHITE, interior_bg=term.BLACK,
             boxtype=term.BoxDouble,
-            draw_top=True, draw_bottom=True):
+            draw_top=True, draw_bottom=True, draw_left=True, draw_right=True
+            ):
+
     data = []
     (blank, horiz, vert, tl, tr, bl, br) = (boxtype.blank, boxtype.horiz, boxtype.vert, boxtype.tl, boxtype.tr, boxtype.bl, boxtype.br)
-    
+    vert_left = vert_right = vert
+    if not draw_left:
+        vert_left = boxtype.blank
+        tl = bl = boxtype.horiz
+
+    if not draw_right:
+        vert_right = boxtype.blank
+        tr = br = boxtype.horiz
+
     mid_rows = height
     if draw_top:
         mid_rows -= 1
@@ -124,7 +135,7 @@ def make_box(width, height, x=0, y=0,
         mid_rows -= 1
 
     for row in range(mid_rows):
-        data.append([(border_fg, border_bg, vert)] + ([(interior_fg, interior_bg, blank)]*(width-2)) + [(border_fg, border_bg, vert)])
+        data.append([(border_fg, border_bg, vert_left)] + ([(interior_fg, interior_bg, blank)]*(width-2)) + [(border_fg, border_bg, vert_right)])
 
     if draw_bottom:
         data.append([(border_fg, border_bg, bl)] + ([(border_fg, border_bg, horiz)]*(width-2)) + [(border_fg, border_bg, br)])

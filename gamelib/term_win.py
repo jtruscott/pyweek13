@@ -84,4 +84,8 @@ def render_buffer(buf):
              color = chr(fg + (bg << 4))
              text.append(ch)
              text.append(color)
+    #log.debug('text: %r', text)
     return ''.join(text)
+
+def raw_getkey():
+    return W.getkey()
