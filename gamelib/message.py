@@ -26,6 +26,7 @@ def setup_message_ui():
     M.messages = []
     M.scroll_offset = 0
     M.text_height = M.message_zone.height - 2
+    M.text_width = M.message_zone.width - 2
 
     zone_title = screen.Text(
                                 "[ Messages ]",
@@ -33,6 +34,8 @@ def setup_message_ui():
     )
     zone_title.x = (M.message_zone.width - len(zone_title.message)) / 2
     M.message_zone.children.append(zone_title)
+
+    add_message("This is an incredibly long line" + "abcdefg " * 12)
 
 @event.on('battle.tick')
 def tmp():
@@ -45,12 +48,15 @@ def draw_message_log():
     M.pointer.draw()
 
     message_slice = M.messages[M.scroll_offset:M.scroll_offset + M.text_height]
+    y = 1
     for i in range(len(message_slice)):
         msg = message_slice[i]
         msg.x = 1 + M.message_zone.x
-        msg.y = 1 + i
+        msg.y = y
         msg.dirty = True
         msg.draw()
+
+        y += msg.height
 
 @event.on('scroll')
 def scroll_message(rel=0, home=False, end=False):
@@ -77,5 +83,5 @@ def calc_offset(off):
 
 def add_message(message):
     log.debug("adding message: %r", message)
-    rt = screen.RichText(message)
+    rt = screen.RichText(message, x=1, wrap_to=M.text_width)
     M.messages.append(rt)

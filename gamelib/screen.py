@@ -37,11 +37,19 @@ class Buffer:
             child.draw(xoff, yoff, dirty)
 
 class Text(Buffer):
-    def __init__(self, message, fg=term.WHITE, bg=term.BLACK, center_to=None, **kwargs):
+    """
+        A specialized buffer for displaying text.
+        The RichText subclass displays colorable text.
+
+        center_to=x centers the text to X characters
+        wrap_to=x wraps the text every X characters. incompatible with center_to.
+    """
+    def __init__(self, message, fg=term.WHITE, bg=term.BLACK, center_to=None, wrap_to=None, **kwargs):
         self.message = self.base_message = message
         self.fg = fg
         self.bg = bg
         self.center_to = center_to
+        self.wrap_to = wrap_to
 
         Buffer.__init__(self, width=0, height=1, data=None, **kwargs)
         self.update_data()
@@ -59,10 +67,29 @@ class Text(Buffer):
         msg = self.message
         if self.center_to:
             msg = msg.center(self.center_to)
+        
         for c in msg:
-            data.append((self.fg, self.bg, c))
-        self.width = len(data)
-        self.data = [data]
+           data.append((self.fg, self.bg, c))
+        
+        if self.wrap_to and len(data) > self.wrap_to:
+            width = self.wrap_to
+            wrapped_data = []
+            for i in range(0, len(data), width):
+                chunk = data[i:i+width]
+                while len(chunk) < width:
+                    chunk.append((self.fg, self.bg, ' '))
+                wrapped_data.append(chunk)
+
+            self.width = width
+            self.height = len(wrapped_data)
+            log.debug('wd: %r', wrapped_data)
+            self.data = wrapped_data
+
+        else:
+            self.width = len(data)
+            self.height = 1
+            self.data = [data]
+
         self.dirty = True
 
 class RichText(Text):
@@ -80,9 +107,24 @@ class RichText(Text):
 
         if self.center_to:
             data.extend([(self.fg, self.bg, ' ')]*((self.center_to - total_len)/2))
+        
+        if self.wrap_to and len(data) > self.wrap_to:
+            width = self.wrap_to
+            wrapped_data = []
+            for i in range(0, len(data), width):
+                chunk = data[i:i+width]
+                while len(chunk) < width:
+                    chunk.append((self.fg, self.bg, ' '))
+                wrapped_data.append(chunk)
 
-        self.width = len(data)
-        self.data = [data]
+            self.width = width
+            self.height = len(wrapped_data)
+            log.debug('wd: %r', wrapped_data)
+            self.data = wrapped_data
+
+        else:
+            self.width = len(data)
+            self.data = [data]
         self.dirty = True
 
     def parse(self):
