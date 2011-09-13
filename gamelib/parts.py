@@ -1,3 +1,5 @@
+from random import randint
+
 from attacks import *
 
 #dictionary of name:part for lookups
@@ -17,6 +19,12 @@ def random_adjective(theme):
         "fire": ["flaming", "firey"],
         "storm": ["stormy", "crackling", "thunderous"],
         }
+    i = len(words[theme])   # i now contains the number of adjectives in adjective list for theme
+    
+    j = randint(0,i-1)      # j now contains the index of a random adjective in list for theme
+    
+    return words[theme][j]
+    
     
 
 class Part:
@@ -55,26 +63,27 @@ class Part:
 
 parts = {
     'head': [
-        Part("Human Head", "A perfectly normal human head", "mundane"),
+        Part("Human Head", "A perfectly normal human head", "human"),
         Part("Spider Head", "An enormous, %(adjective) spider's head, with compund eyes sharp mandibles that drip venom", "bug",
              #attack=BiteAttack(status=poison)
              ),
         Part("Wolf's Head", "A long, canine snout, full of sharp teeth", "animal", attack=BiteAttack(damage=1))
     ],
     'body': [
-        Part("Human Torso", "A perfectly normal human torso", "mundane"),
-        Part("Strong Human Torso", "A muscular human torso", "mundane", hp=1),
+        Part("Human Torso", "A perfectly normal human torso", "human"),
+        Part("Strong Human Torso", "A muscular human torso", "human", hp=1),
         Part("Scaled Torso", "A torso covered in thick, durable scales", "fish", armor=1, hp=2),
     ],
     'legs': [
-        Part("Human Legs", "A perfectly normal pair of human legs", "mundane"),
+        Part("Human Legs", "A perfectly normal pair of human legs", "human"),
     ],
     'back': [],
     'tail': [],
 
     'limbs': [
-        Part("Human Arm", "A perfectly normal human arm", "mundane", attack=PunchAttack()),
-        Part("Strong Human Arm", "A very strong human arm", "mundane", attack=PunchAttack(damage=1)),
+        Part("Human Arm", "A perfectly normal human arm", "human", attack=PunchAttack()),
+        Part("Strong Human Arm", "A very strong human arm", "human", attack=PunchAttack(damage=1)),
     ]
 }
 
+print random_adjective("fish")
