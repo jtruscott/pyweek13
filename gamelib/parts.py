@@ -1,22 +1,32 @@
+import random
+
 from attacks import *
+
+import logging
+log = logging.getLogger('parts')
 
 #dictionary of name:part for lookups
 by_name = {}
 
+words = {
+    "human":["mundane", "boring", "uninteresting", "ordinary"],
+    "bug": ["insectoid", "buglike"],
+    "avian": ["avian"],
+    "animal": ["mammalian"],
+    "fish": ["squamous", "ichthyoidal", "fishlike"],
+    "ceph": ["cephalopodic"],
+    "robo": ["metallic", "robotic"],
+    "bio": ["organic",],
+    "stone": ["granite", "basalt", "marble", ],
+    "fire": ["flaming", "firey"],
+    "storm": ["stormy", "crackling", "thunderous"],
+}
 def random_adjective(theme):
-    words = {
-        "human":["mundane", "boring", "uninteresting", "ordinary"],
-        "bug": ["insectoid", "buglike"],
-        "avian": ["avian"],
-        "animal": ["mammalian"],
-        "fish": ["squamous", "ichthyoidal", "fishlike"],
-        "ceph": ["cephalopodic"],
-        "robo": ["metallic", "robotic"],
-        "bio": ["organic",],
-        "stone": ["granite", "basalt", "marble", ],
-        "fire": ["flaming", "firey"],
-        "storm": ["stormy", "crackling", "thunderous"],
-        }
+    if theme not in words:
+        log.debug("Theme not in words: %s", theme)
+        return theme
+    return random.choice(words[theme])
+    
     
 
 class Part:
@@ -61,14 +71,14 @@ class Part:
 parts = {
     'head': [
         Part("Human Head", "A perfectly normal human head", "mundane", attack=BiteAttack()),
-        Part("Spider Head", "An enormous, %(adjective) spider's head, with compund eyes sharp mandibles that drip venom", "bug",
+        Part("Spider Head", "An enormous, %(adjective)s spider's head, with compound eyes and sharp mandibles that drip venom", "bug",
              #attack=BiteAttack(status=poison)
              ),
         Part("Wolf's Head", "A long, canine snout, full of sharp teeth", "animal", attack=BiteAttack(damage=1))
     ],
     'body': [
-        Part("Human Torso", "A perfectly normal human torso", "mundane"),
-        Part("Strong Human Torso", "A muscular human torso", "mundane", hp=1),
+        Part("Human Torso", "A perfectly normal human torso", "human"),
+        Part("Strong Human Torso", "A muscular human torso", "human", hp=1),
         Part("Scaled Torso", "A torso covered in thick, durable scales", "fish", armor=1, hp=2),
     ],
     'legs': [
@@ -78,8 +88,9 @@ parts = {
     'tail': [],
 
     'limbs': [
-        Part("Human Arm", "A perfectly normal human arm", "mundane", attack=PunchAttack()),
-        Part("Strong Human Arm", "A very strong human arm", "mundane", attack=PunchAttack(damage=1)),
+        Part("Human Arm", "A perfectly normal human arm", "human", attack=PunchAttack()),
+        Part("Strong Human Arm", "A very strong human arm", "human", attack=PunchAttack(damage=1)),
     ]
 }
 
+print random_adjective("fish")

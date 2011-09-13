@@ -48,17 +48,18 @@ def start_battle():
 
 def describe_enemy():
     enemy_zone.children = [
-        screen.RichText("Before you is a %s with %i hp!" % (enemy.name, enemy.hp), x=1, y=2, center_to=enemy_zone.width-2),
+        screen.RichText("Before you is a %s with %i hp!" % (enemy.name, enemy.hp), x=1, y=2, center_to=enemy_zone.width-2, wrap_to=enemy_zone.width-2),
     ]
     y = 4
     for slot in enemy.slots:
         if enemy.parts[slot]:
             part = enemy.parts[slot]
-            enemy_zone.children.append(screen.RichText(
-                "it's %s: %s" % (slot, part.description),
-                x=1,y=y, center_to=enemy_zone.width-2
-            ))
-            y += 1
+            text_block = screen.RichText(
+                "it's %s: %s" % (slot, (part.description % part.__dict__)),
+                x=1,y=y, center_to=enemy_zone.width-2, wrap_to=enemy_zone.width-2
+            )
+            enemy_zone.children.append(text_block)
+            y += text_block.height
     enemy_zone.dirty = True
 
 @event.on('battle.prompt')
