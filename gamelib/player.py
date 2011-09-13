@@ -47,6 +47,23 @@ class Humanoid:
     def reset_status(self):
         self.status = None
 
+    def all_parts(self):
+        """
+            Generator to iterative over all parts in a Humanoid
+        """
+        for slot in self.slots:
+            if not self.parts[slot]:
+                continue
+            yield self.parts[slot]
+        for limb_slot in self.limbs:
+            for limb in self.parts[limb_slot]:
+                yield limb
+
+    def battle_reset(self):
+        self.cur_hp = self.hp
+        for part in self.all_parts():
+            part.battle_reset()
+
 
 class Player(Humanoid):
     name = "Player"
@@ -81,7 +98,7 @@ class Enemy(Humanoid):
         for slot in ['head', 'body', 'legs']:
             self.parts[slot] = self.random_part(slot)
         for limb in self.limbs:
-            self.parts[limb] = self.random_part('limbs')
+            self.parts[limb] = [self.random_part('limbs')]
 
     def random_part(self, slot):
         return random.choice(parts.parts[slot])

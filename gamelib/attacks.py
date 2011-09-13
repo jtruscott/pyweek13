@@ -40,7 +40,10 @@ class Attack:
         
         self.base_speed = 4         #this shouldn't be used, but just in case
         self.speed = speed + self.base_speed
-
+    
+    def battle_reset(self):
+        self.cur_cooldown = 0
+        
     def calc_min_damage(self, owner):
         return self.numdice + self.damage
 

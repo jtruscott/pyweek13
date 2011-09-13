@@ -52,10 +52,15 @@ class Part:
         target.damage_bonus += self.damage_bonus 
         target.accuracy_bonus += self.accuracy_bonus
         target.proc_chance_bonus += self.proc_chance_bonus
+    
+    def battle_reset(self):
+        if self.attack:
+            self.attack.battle_reset()
+
 
 parts = {
     'head': [
-        Part("Human Head", "A perfectly normal human head", "mundane"),
+        Part("Human Head", "A perfectly normal human head", "mundane", attack=BiteAttack()),
         Part("Spider Head", "An enormous, %(adjective) spider's head, with compund eyes sharp mandibles that drip venom", "bug",
              #attack=BiteAttack(status=poison)
              ),
@@ -67,7 +72,7 @@ parts = {
         Part("Scaled Torso", "A torso covered in thick, durable scales", "fish", armor=1, hp=2),
     ],
     'legs': [
-        Part("Human Legs", "A perfectly normal pair of human legs", "mundane"),
+        Part("Human Legs", "A perfectly normal pair of human legs", "mundane", attack=LaserAttack()),
     ],
     'back': [],
     'tail': [],

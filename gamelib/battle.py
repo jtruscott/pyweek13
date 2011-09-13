@@ -1,4 +1,5 @@
 import screen, event, state, term, player, message
+import collections
 
 import logging
 log = logging.getLogger('battle')
@@ -8,10 +9,10 @@ enemy = None
 @event.on('setup')
 def setup_battle_ui():
 
-    global action_bar, action_text, enemy_zone
+    global action_zone, action_text, enemy_zone
     conf = state.config
     action_height = conf.height - conf.viewport_height
-    action_bar = screen.make_box(conf.width, action_height,
+    action_zone = screen.make_box(conf.width, action_height,
                                 y=conf.height - action_height,
                                 border_fg=term.YELLOW,
                                 
@@ -20,25 +21,30 @@ def setup_battle_ui():
                                 x=conf.width - conf.viewport_width,
                                 border_fg=term.RED,
     )
-    action_text = screen.RichText("oh my god, it's a <RED>mutant!</> (<GREEN>%i</>)", x=1, y=5, center_to=action_bar.width-2)
-    action_bar.children.append(action_text)
+    action_text = screen.RichText("oh my god, it's a <RED>mutant!</> (<GREEN>%i</>)", x=1, y=5, center_to=action_zone.width-2)
+    action_zone.children.append(action_text)
 
 @event.on('battle.draw')
 def draw_battle():
+    draw_player_attacks()
+
     action_text.format(i)
-    action_bar.draw()
+    action_zone.draw()
     enemy_zone.draw()
+
     
 @event.on('battle.start')
 def start_battle():
-    global enemy
+    global enemy, selected_attack
     enemy = player.Enemy()
     describe_enemy()
 
-    test = create_attack_buffer([state.player.parts['left_arm'][0].attack, state.player.parts['left_arm'][0].attack], state.player, False)
-    test.x = 1
-    test.y = 1
-    action_bar.children.append(test)
+    state.player.battle_reset()
+    enemy.battle_reset()
+
+    list_player_attacks()
+    selected_attack = player_attacks.keys()[0]
+
 
 def describe_enemy():
     enemy_zone.children = [
@@ -60,6 +66,59 @@ def battle_prompt():
     term.getkey()
     global i
     i += 1
+
+def list_player_attacks():
+    global player_attacks
+
+    attack_types = {}
+        
+    for part in state.player.all_parts():
+        if not part.attack:
+            continue
+        attack = part.attack
+        attack_types.setdefault(attack.name, [])
+        attack_types[attack.name].append(attack)
+    
+    log.debug("attack_types: %r", attack_types)
+    
+    player_attacks = {}
+    
+    #create a named tuple so we have field names
+    attack_tuple = collections.namedtuple('AttackTuple', ('attacks', 'unsel_buffer', 'sel_buffer', 'cooldown_buffer'))
+
+    for attack_name, attacks in attack_types.items():
+        unsel_buffer = create_attack_buffer(attacks, state.player)
+        sel_buffer = create_attack_buffer(attacks, state.player, selected=True)
+        cooldown_buffer = None
+
+        player_attacks[attack_name] = attack_tuple(attacks, unsel_buffer, sel_buffer, cooldown_buffer)
+
+def draw_player_attacks():
+    x_base = x = 1
+    x_skip = 21
+    
+    y_base = y = 1
+    y_skip = 4
+    y_max = 8
+
+    attacks = []
+    for attack_name, attack_tuple in player_attacks.items():
+        if attack_name == selected_attack:
+            buf = attack_tuple.sel_buffer
+        else:
+            buf = attack_tuple.unsel_buffer
+        
+        buf.x = x
+        buf.y = y
+        attacks.append(buf)
+
+        y += y_skip
+        if y >= y_max:
+            y = y_base
+            x += x_skip
+
+    action_zone.children = attacks
+
 
 def create_attack_buffer(attacks, owner, selected=False):
     """
