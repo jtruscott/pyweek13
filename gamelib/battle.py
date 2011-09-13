@@ -22,11 +22,6 @@ def setup_battle_ui():
     )
     action_text = screen.RichText("oh my god, it's a <RED>mutant!</> (<GREEN>%i</>)", x=1, y=5, center_to=action_bar.width-2)
     action_bar.children.append(action_text)
-    
-    test = create_attack_buffer([state.player.parts['left_arm'][0]], state.player, False)
-    test.x = 1
-    test.y = 1
-    action_bar.children.append(test)
 
 @event.on('battle.draw')
 def draw_battle():
@@ -39,6 +34,11 @@ def start_battle():
     global enemy
     enemy = player.Enemy()
     describe_enemy()
+
+    test = create_attack_buffer([state.player.parts['left_arm'][0].attack, state.player.parts['left_arm'][0].attack], state.player, False)
+    test.x = 1
+    test.y = 1
+    action_bar.children.append(test)
 
 def describe_enemy():
     enemy_zone.children = [
@@ -80,8 +80,8 @@ def create_attack_buffer(attacks, owner, selected=False):
         line = "%s%s%s" % (' ' * ((max_width-base_width)/2), line, ' ' * ((max_width-base_width)/2))
         return line
     
-    if len(attacks):
-        line1 = "%ix %s" % (count, attacks[0].name)
+    if len(attacks) > 1:
+        line1 = "%ix %s" % (len(attacks), attacks[0].name)
     else:
         line1 = "%s" % attacks[0].name
     line1 = '<%s>%s</>' % (name_color, line1.center(max_width))
@@ -90,7 +90,7 @@ def create_attack_buffer(attacks, owner, selected=False):
     min_damage = sum([attack.calc_min_damage(owner) for attack in attacks])
     max_damage = sum([attack.calc_max_damage(owner) for attack in attacks])
     line2_len = len("Atk +%i Dmg %i-%i" % (accuracy, min_damage, max_damage))
-    line2 = "<Atk <%s>+%i</> Dmg <%s>%i-%i</>" % (name_color, accuracy, name_color, min_damage, max_damage)
+    line2 = "Atk <%s>+%i</> Dmg <%s>%i-%i</>" % (name_color, accuracy, name_color, min_damage, max_damage)
     line2 = pad_alternate(line2, line2_len)
 
     speed = attacks[0].speed + (len(attacks) - 1) 
@@ -100,7 +100,7 @@ def create_attack_buffer(attacks, owner, selected=False):
     line3 = pad_alternate(line3, line3_len)
 
     container = screen.Buffer(width=max_width, height=3,
-                    data=[[(term.WHITE, term.BLACK, ' ')]*20]*3],
+                    data=[[(term.WHITE, term.BLACK, ' ')]*20]*3,
                     children = [
                         screen.RichText(line1, y=0),
                         screen.RichText(line2, y=1),

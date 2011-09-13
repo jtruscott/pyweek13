@@ -64,8 +64,8 @@ class Player(Humanoid):
         self.parts['back'] = None
         self.parts['tail'] = None
 
-        self.parts['left_arm'] = parts.by_name['Human Arm']
-        self.parts['right_arm'] = parts.by_name['Human Arm']
+        self.parts['left_arm'] = [parts.by_name['Human Arm']]
+        self.parts['right_arm'] = [parts.by_name['Human Arm']]
 
 
 class Enemy(Humanoid):

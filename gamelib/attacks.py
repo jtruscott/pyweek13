@@ -2,7 +2,7 @@ class Attack:
     name = "Attack"
     
     def __init__(self,
-                numdice=0, dietype=0, damage=0,
+                numdice=None, dietype=None, damage=0,
                 accuracy=0, status=None,
                 cooldown=0, speed=0
                 ):
@@ -16,11 +16,15 @@ class Attack:
         cooldown and speed are signed int modifiers to default values, not replacements;
         remember that an increase in the value of speed makes the attack slower.
          '''
-        if numdice > 0:
+        if numdice is not None:
             self.numdice = numdice
-            
-        if numdice > 0:
+        else:
+            self.numdice = self.base_numdice
+        
+        if dietype is not None:            
             self.dietype = dietype
+        else:
+            self.dietype = self.base_dietype
             
         self.damage = damage
         
@@ -36,7 +40,15 @@ class Attack:
         
         self.base_speed = 4         #this shouldn't be used, but just in case
         self.speed = speed + self.base_speed
-        
+
+    def calc_min_damage(self, owner):
+        return self.numdice + self.damage
+
+    def calc_max_damage(self, owner):
+        return self.numdice*self.dietype + self.damage
+
+    def calc_accuracy(self, owner):
+        return self.accuracy + self.damage
 
 class PunchAttack(Attack):
     name = "Punch"

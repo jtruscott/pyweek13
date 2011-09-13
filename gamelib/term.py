@@ -14,7 +14,8 @@ except ImportError:
     import curses
     win = False
     log.debug("Imported curses; win = %r", win)
-    from term_curses import *
+    try:
+        from term_curses import *
     except ImportError:
         import sys
         print "This program requires either WConio or Curses!"
