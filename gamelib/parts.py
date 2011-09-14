@@ -12,7 +12,7 @@ words = {
     "human":["mundane", "boring", "uninteresting", "ordinary", "human"],
     "bug": ["insectoid", "buglike", "arachnidan", "vespine", "wasplike", "myrmecine", "antlike", "chitinous", "exoskeletal"],
     "avian": ["avian", "birdly", "birdlike", "feathered", "vulturelike", "corvine", "sleek", ],
-    "animal": ["mammalian", "beastly", "monstrous", "lupinefant", "ursine", "feline", "equine"],
+    "animal": ["mammalian", "beastly", "monstrous", "lupine", "ursine", "feline", "equine"],
     "fish": ["squamous", "ichthyoidal", "fishlike", "piscine", "scaled", "streamlined"],
     "ceph": ["cephalopodic", "noisome", "amorphous", "many-tentacled", "molluscular", "wiggly", "undulating", "antedeluvian"],
     "robo": ["metallic", "robotic", "cold", "unfeeling", "angular", "industrial", "ferrous", "unyielding", "statuesque"],
