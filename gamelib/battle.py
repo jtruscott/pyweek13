@@ -95,6 +95,23 @@ def battle_prompt():
         log.debug('selected_attack_index: %r', selected_attack_index)
         return
 
+    #check for reasons to skip this turn
+    if state.player.cur_tick_delay:
+        #missing a turn
+        return
+    can_attack = False
+    minimum_wait = 1
+    for attack_tuple in player_attacks.values():
+        if not attack_tuple.attacks[0].cur_cooldown:
+            can_attack = True
+            break
+        minimum_wait = min(minimum_wait, attack_tuple.attacks[0].cur_cooldown)
+    if not can_attack:
+        message.add("<DARKGREY>No attacks available")
+        message.add("<DARKGREY>%s delays for %i" % (state.player.name, minimum_wait))
+        state.player.cur_tick_delay = minimum_wait
+        return
+
     while True:
         sel_x, sel_y = draw_player_attacks()
         draw_attack_pointer(sel_x, sel_y)

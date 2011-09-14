@@ -68,8 +68,8 @@ class Part:
             self.attack.battle_reset()
 
     def battle_tick(self):
-        if self.cur_coldown:
-            self.cur_cooldown -= 1
+        if self.attack:
+            self.attack.battle_tick()
 
 parts = {
     'head': [

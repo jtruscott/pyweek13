@@ -44,6 +44,10 @@ class Attack:
     
     def battle_reset(self):
         self.cur_cooldown = 0
+
+    def battle_tick(self):
+        if self.cur_cooldown:
+            self.cur_cooldown -= 1
         
     def calc_min_damage(self, owner):
         return self.numdice + self.damage
