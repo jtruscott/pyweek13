@@ -5,7 +5,7 @@ try:
     nosound = False
 except ImportError:
     nosound = True
-
+nosound = True
 import state, event
 
 import logging
@@ -15,9 +15,6 @@ if nosound:
     log.debug("Sound disabled.")
 
 media_cache = {}
-loop = pyglet.app.EventLoop()
-clk = pyglet.clock.get_default()
-
 def play(name):
     if nosound or state.config.no_sound:
         return
@@ -42,6 +39,8 @@ def start_pyglet():
 
 @event.on('setup')
 def setup_sound():
+    if nosound or state.config.no_sound:
+        return
     background_thread = threading.Thread(target=start_pyglet)
     background_thread.daemon = True
     background_thread.start()
