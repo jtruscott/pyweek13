@@ -88,4 +88,8 @@ def render_buffer(buf):
     return ''.join(text)
 
 def raw_getkey():
-    return W.getkey()
+    key = W.getkey()
+    if key in ('\r', '\n'):
+        key = 'enter'
+        
+    return key

@@ -46,6 +46,11 @@ class BoxMessage(BoxDouble):
     cur_bottom = chr(0xCF)
     cur = chr(0xD8)
 
+class Pointer:
+    left = chr(0x10)
+    right = chr(0x11)
+
+
 event.on('flip')(flip)
 
 

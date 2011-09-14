@@ -1,15 +1,17 @@
 import screen, event, state, term, player, message, sounds
-import collections
+import collections, random
 
 import logging
 log = logging.getLogger('battle')
-i = 0
+
 enemy = None
+selected_attack_index = None
+
 
 @event.on('setup')
 def setup_battle_ui():
 
-    global action_zone, action_text, enemy_zone
+    global action_zone, enemy_zone
     conf = state.config
     action_height = conf.height - conf.viewport_height
     action_zone = screen.make_box(conf.width, action_height,
@@ -21,21 +23,18 @@ def setup_battle_ui():
                                 x=conf.width - conf.viewport_width,
                                 border_fg=term.RED,
     )
-    action_text = screen.RichText("oh my god, it's a <RED>mutant!</> (<GREEN>%i</>)", x=1, y=5, center_to=action_zone.width-2)
-    action_zone.children.append(action_text)
 
 @event.on('battle.draw')
 def draw_battle():
     draw_player_attacks()
 
-    action_text.format(i)
     action_zone.draw()
     enemy_zone.draw()
 
     
 @event.on('battle.start')
 def start_battle():
-    global enemy, selected_attack
+    global enemy, selected_attack_index
     enemy = player.Enemy()
     describe_enemy()
 
@@ -43,7 +42,7 @@ def start_battle():
     enemy.battle_reset()
 
     list_player_attacks()
-    selected_attack = player_attacks.keys()[0]
+    selected_attack_index = 0
 
 
 def describe_enemy():
@@ -51,28 +50,85 @@ def describe_enemy():
         screen.RichText("Before you is a %s with %i hp!" % (enemy.name, enemy.hp), x=1, y=2, center_to=enemy_zone.width-2, wrap_to=enemy_zone.width-2),
     ]
     y = 4
+    def make_part_buffer(slot, part):
+        return screen.RichText(
+            "its %s: %s" % (slot, (part.description % part.__dict__)),
+            x=1,y=y, center_to=enemy_zone.width-2, wrap_to=enemy_zone.width-2
+        )
+
     for slot in enemy.slots:
         if enemy.parts[slot]:
             part = enemy.parts[slot]
-            text_block = screen.RichText(
-                "it's %s: %s" % (slot, (part.description % part.__dict__)),
-                x=1,y=y, center_to=enemy_zone.width-2, wrap_to=enemy_zone.width-2
-            )
+            text_block = make_part_buffer(slot, part)
+            enemy_zone.children.append(text_block)
+            y += text_block.height
+    for slot in enemy.limbs:
+        for part in enemy.parts[slot]:
+            text_block = make_part_buffer(slot, part)
             enemy_zone.children.append(text_block)
             y += text_block.height
     enemy_zone.dirty = True
 
+@event.on('battle.tick')
+def battle_tick():
+    log.debug("in tick, delays are %r and %r", state.player.cur_tick_delay, enemy.cur_tick_delay)
+    while state.player.cur_tick_delay and enemy.cur_tick_delay:
+        log.debug("spending tick")
+        state.player.battle_tick()
+        enemy.battle_tick()
+    
+    if not state.player.cur_tick_delay:
+        #go to the prompt
+        return
+    if not enemy.cur_tick_delay:
+        enemy.do_action()
+    return
+
 @event.on('battle.prompt')
 def battle_prompt():
-    key = term.getkey()
+    global selected_attack_index
 
-    #if key == 'down':
-    #    sounds.play('Randomize')
-    global i
-    i += 1
+    def selection_wrap(idx):
+        global selected_attack_index
+        idx = selected_attack_index + idx
+        selected_attack_index = max(0, min(len(attack_names)-1, idx))
+        log.debug('selected_attack_index: %r', selected_attack_index)
+        return
+
+    while True:
+        sel_x, sel_y = draw_player_attacks()
+        draw_attack_pointer(sel_x, sel_y)
+        event.fire('flip')
+
+        key = term.getkey()
+        if key == 'enter':
+            current = player_attacks[attack_names[selected_attack_index]]
+            if current.attacks[0].cur_cooldown:
+                message.error("That attack is on cooldown.", flip=True)
+                continue
+
+            else:
+                #selection confirmed
+                resolve_attack(current.attacks, player, enemy)
+                return
+
+        elif key == 'up':
+            selection_wrap(-1)
+
+        elif key == 'down':
+            selection_wrap(+1)
+
+        elif key == 'left':
+            selection_wrap(-2)
+        
+        elif key == 'right':
+            selection_wrap(+2)
+
+    
+    return
 
 def list_player_attacks():
-    global player_attacks
+    global player_attacks, attack_names
 
     attack_types = {}
         
@@ -96,6 +152,7 @@ def list_player_attacks():
         cooldown_buffer = create_cooldown_buffer(attacks)
 
         player_attacks[attack_name] = attack_tuple(attacks, unsel_buffer, sel_buffer, cooldown_buffer)
+    attack_names = attack_types.keys()
 
 def draw_player_attacks():
     x_base = x = 1
@@ -105,16 +162,33 @@ def draw_player_attacks():
     y_skip = 4
     y_max = 8
 
+    sel_x = sel_y = 0
     attacks = []
-    for attack_name, attack_tuple in player_attacks.items():
-        if attack_name == selected_attack:
+    for attack_name in attack_names:
+        attack_tuple = player_attacks[attack_name]
+        
+        if attack_tuple.attacks[0].cur_cooldown:
+            buf = attack_tuple.cooldown_buffer
+            cooldown_text = '<DARKGREY>%s' % ((
+                    "(available in %i)" % (attack_tuple.attacks[0].cur_cooldown)
+                    ).center(20))
+            buf.children[1].set(cooldown_text)
+
+        elif attack_name == attack_names[selected_attack_index]:
+            log.debug('sel: %r [%i]', attack_name, selected_attack_index)
             buf = attack_tuple.sel_buffer
+
         else:
             buf = attack_tuple.unsel_buffer
         
         buf.x = x
         buf.y = y
+        buf.dirty = True
         attacks.append(buf)
+
+        if attack_name == attack_names[selected_attack_index]:
+            sel_x = buf.x + action_zone.x
+            sel_y = buf.y + action_zone.y
 
         y += y_skip
         if y >= y_max:
@@ -122,7 +196,22 @@ def draw_player_attacks():
             x += x_skip
 
     action_zone.children = attacks
+    action_zone.dirty = True
+    action_zone.draw()
+    return sel_x, sel_y
 
+def draw_attack_pointer(sel_x, sel_y):
+    screen.left_pointer.x = sel_x
+    screen.right_pointer.x = sel_x+20
+
+    screen.left_pointer.y = sel_y
+    screen.right_pointer.y = sel_y
+
+    screen.left_pointer.dirty = True
+    screen.right_pointer.dirty = True
+
+    screen.left_pointer.draw()
+    screen.right_pointer.draw()
 
 def create_attack_buffer(attacks, owner, selected=False):
     """
@@ -149,17 +238,17 @@ def create_attack_buffer(attacks, owner, selected=False):
         line1 = "%s" % attacks[0].name
     line1 = '<%s>%s</>' % (name_color, line1.center(max_width))
 
-    accuracy = sum([attack.calc_min_damage(owner) for attack in attacks]) / len(attacks)
+    accuracy = sum([attack.calc_accuracy(owner) for attack in attacks]) / len(attacks)
     min_damage = sum([attack.calc_min_damage(owner) for attack in attacks])
     max_damage = sum([attack.calc_max_damage(owner) for attack in attacks])
-    line2_len = len("Atk +%i Dmg %i-%i" % (accuracy, min_damage, max_damage))
-    line2 = "Atk <%s>+%i</> Dmg <%s>%i-%i</>" % (name_color, accuracy, name_color, min_damage, max_damage)
+    line2_len = len("Atk +%-2i Dmg %2i-%-2i" % (accuracy, min_damage, max_damage))
+    line2 = "<DARKGREY>Atk <%s>+%-2i</> Dmg <%s>%2i-%-2i</>" % (name_color, accuracy, name_color, min_damage, max_damage)
     line2 = pad_alternate(line2, line2_len)
 
     speed = attacks[0].speed + (len(attacks) - 1) 
     cooldown = attacks[0].cooldown + (len(attacks) - 1)
-    line3_len = len("Time %i Delay %i" % (speed, cooldown))
-    line3 = "Time <%s>%i</> Delay <%s>%i</>" % (name_color, speed, name_color, cooldown)
+    line3_len = len("Time %-2i Delay %2i " % (speed, cooldown))
+    line3 = "<DARKGREY>Time <%s>%-2i</> Delay <%s>%2i</> " % (name_color, speed, name_color, cooldown)
     line3 = pad_alternate(line3, line3_len)
 
     container = screen.Buffer(width=max_width, height=3,
@@ -173,4 +262,79 @@ def create_attack_buffer(attacks, owner, selected=False):
     return container
 
 def create_cooldown_buffer(attacks):
-    return
+    max_width = 20
+    line1 = '<DARKGREY>%s' % attacks[0].name.center(max_width)
+    line2 = '' #dynamically set
+    line3 = ''.center(max_width)
+    
+    container = screen.Buffer(width=max_width, height=3,
+                    data=[[(term.WHITE, term.BLACK, ' ')]*20]*3,
+                    children = [
+                        screen.RichText(line1, y=0),
+                        screen.RichText(line2, y=1),
+                        screen.RichText(line3, y=2),
+                    ]
+    )
+    return container
+
+
+def resolve_attack(attacks, owner, target):
+    def d20():
+        return random.randint(1,20)
+    combo = False
+    speed_mod = 0
+    duration_mod = 0
+    accuracy_penalty = 0
+    if len(attacks) > 1:
+        combo = True
+        speed_mod = (len(attacks) - 1)*2
+        duration_mod = (len(attacks) - 1)*2
+    
+    for attack in attacks:
+        #to hit
+        accuracy_roll = d20()
+        accuracy_mod = attack.calc_accuracy(owner) - accuracy_penalty
+        hit = (accuracy_roll + accuracy_mod >= target.evasion)
+        accuracy_text = "<DARKGREY>(<GREEN>%i</><BROWN>%+i</> vs <LIGHTGREY>%i</>)" % (
+                                    accuracy_roll, accuracy_mod, target.evasion)
+        #damage
+        if hit:
+            message.add("<LIGHTGREEN>Hit!  %s" % accuracy_text)
+            damage_roll = d20()
+            damage_mod = attack.calc_damage(owner)
+            damage = max(0, damage_roll + damage_mod - target.armor)
+            armor_penalty_text = target.armor and ("<RED>%+i</>" % target.armor) or ""
+            message.add("<LIGHTGREY>%s<DARKGREY> takes <LIGHTRED>%i</> damage! (<GREEN>%i</><BROWN>%+i</>%s)" % (
+                                    target.name, damage, damage_roll, damage_mod, armor_penalty_text))
+            target.take_damage(damage)
+            if target.cur_hp <= 0:
+                message.add("<YELLOW>%s was defeated!" % target.name)
+                if target == state.player:
+                    event.fire('player.defeated')
+                else:
+                    event.fire('enemy.defeated')
+                break
+
+        else:
+            message.add("<LIGHTRED>Miss! %s" % accuracy_text)
+
+        message.newline()
+        #attack bookkeeping
+        attack.cur_cooldown = attack.cooldown + duration_mod
+        accuracy_penalty += 2
+    
+    #owner bookkeeping
+    owner.cur_tick_cooldown = attacks[0].speed + speed_mod
+    message.newline()
+
+@event.on('enemy.defeated')
+def enemy_defeated():
+    #THERE IS NO ESCAPE
+    start_battle()
+
+@event.on('player.defeated')
+def enemy_defeated():
+    #THERE IS NO ESCAPE
+    class SadFace(Exception): pass
+    raise SadFace(":(")
+

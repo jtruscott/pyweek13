@@ -1,3 +1,4 @@
+import random
 class Attack:
     name = "Attack"
     
@@ -49,6 +50,9 @@ class Attack:
 
     def calc_max_damage(self, owner):
         return self.numdice*self.dietype + self.damage
+
+    def calc_damage(self, owner):
+        return sum([random.randint(1,self.dietype) for d in range(self.numdice)])
 
     def calc_accuracy(self, owner):
         return self.accuracy + self.damage

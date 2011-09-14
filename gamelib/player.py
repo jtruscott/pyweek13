@@ -61,9 +61,19 @@ class Humanoid:
 
     def battle_reset(self):
         self.cur_hp = self.hp
+        self.cur_tick_delay = 0
         for part in self.all_parts():
             part.battle_reset()
+    
+    def battle_tick(self):
+        if self.cur_tick_delay:
+            self.cur_tick_delay -= 1
+        for part in self.all_parts():
+            part.battle_tick()
 
+    def take_damage(self, damage):
+        log.debug("%s taking %r damage", self.name, damage)
+        self.cur_hp = max(0, self.cur_hp - damage)
 
 class Player(Humanoid):
     name = "Player"
@@ -102,3 +112,7 @@ class Enemy(Humanoid):
 
     def random_part(self, slot):
         return random.choice(parts.parts[slot])
+
+    def do_action(self):
+        log.debug("doing action")
+        self.cur_tick_delay = 5

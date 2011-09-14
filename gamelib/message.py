@@ -44,6 +44,7 @@ def tmp():
 @event.on('battle.draw')
 @event.on('explore.draw')
 def draw_message_log():
+    M.message_zone.dirty = True
     M.message_zone.draw()
     M.pointer.draw()
 
@@ -51,6 +52,10 @@ def draw_message_log():
     y = 1
     for i in range(len(message_slice)):
         msg = message_slice[i]
+        if y + msg.height >= M.text_height:
+            #gonna run offscreen
+            break
+
         msg.x = 1 + M.message_zone.x
         msg.y = y
         msg.dirty = True
@@ -74,6 +79,7 @@ def scroll_message(rel=0, home=False, end=False):
 
     M.message_zone.dirty = M.pointer.dirty = True
     draw_message_log()
+    event.fire('flip')
 
 def calc_offset(off):
     off = max(0, off) #dont go negative
@@ -81,7 +87,18 @@ def calc_offset(off):
     return off
 
 
-def add_message(message):
+def add_message(message, flip=False):
     log.debug("adding message: %r", message)
     rt = screen.RichText(message, x=1, wrap_to=M.text_width)
     M.messages.append(rt)
+    M.scroll_offset = calc_offset(len(M.messages) - M.text_height)
+    if flip:
+        draw_message_log()
+        event.fire('flip')
+
+add = add_message
+def error(message, **kwargs):
+    add_message("<RED>%s</>" % message, **kwargs)
+
+def newline(**kwargs):
+    add_message("", **kwargs)
