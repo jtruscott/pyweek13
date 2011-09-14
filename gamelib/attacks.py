@@ -5,7 +5,8 @@ class Attack:
     def __init__(self,
                 numdice=None, dietype=None, damage=0,
                 accuracy=0, status=None,
-                cooldown=0, speed=0
+                cooldown=0, speed=0,
+                attacktext="%(owner)s attacks %(target)s with an unhandled exception!"
                 ):
         '''
         numdice and dietype are signed ints which replace, but do not modify, the base XdY damage of the attack;
@@ -16,6 +17,9 @@ class Attack:
         accuracy is bonus to-hit, status is the status effect (by name) that can proc from the attack.
         cooldown and speed are signed int modifiers to default values, not replacements;
         remember that an increase in the value of speed makes the attack slower.
+        
+        attacktext is the text printed when you attack with the weapon; the default value should not be needed;
+        ideally custom attack text should have been passed with the attack profile in the part profile.
          '''
         if numdice is not None:
             self.numdice = numdice
@@ -75,9 +79,44 @@ class BiteAttack(Attack):
     base_cooldown = 1
     base_speed = 5
     
-class LaserAttack(Attack):
-    name = "Laser"
+class EnergyAttack(Attack):
+    name = "Fry"
     base_numdice = 4
     base_dietype = 3
-    base_cooldown = 6
+    base_cooldown = 5
     base_speed = 2
+
+class StabAttack(Attack):
+    name = "Stab"
+    base_numdice = 1
+    base_dietype = 4
+    base_cooldown = 3
+    base_speed = 4
+    
+class BladeAttack(Attack):
+    name = "Slash"
+    base_numdice = 1
+    base_dietype = 4
+    base_cooldown = 2
+    base_speed = 3
+    
+class BeatAttack(Attack):
+    name = "Bludgeon"
+    base_numdice = 1
+    base_dietype = 4
+    base_cooldown = 3
+    base_speed = 4
+    
+class TrampleAttack(Attack):
+    name = "Trample"
+    base_numdice = 1
+    base_dietype = 4
+    base_cooldown = 2
+    base_speed = 4
+    
+class ClawAttack(Attack):
+    name = "Rend"
+    base_numdice = 1
+    base_dietype = 4
+    base_cooldown = 1
+    base_speed = 4
