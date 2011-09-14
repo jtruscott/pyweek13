@@ -82,7 +82,7 @@ class Text(Buffer):
 
             self.width = width
             self.height = len(wrapped_data)
-            log.debug('wd: %r', wrapped_data)
+            #log.debug('wd: %r', wrapped_data)
             self.data = wrapped_data
 
         else:
@@ -119,7 +119,7 @@ class RichText(Text):
 
             self.width = width
             self.height = len(wrapped_data)
-            log.debug('wd: %r', wrapped_data)
+            #log.debug('wd: %r', wrapped_data)
             self.data = wrapped_data
 
         else:
@@ -187,3 +187,11 @@ def make_box(width, height, x=0, y=0,
 
     buf = Buffer(width=width, height=height, data=data, x=x, y=y)
     return buf
+
+
+left_pointer = Buffer(1,1,
+    data=[[[term.WHITE, term.BLACK, term.Pointer.left]]]
+)
+right_pointer = Buffer(1,1,
+    data=[[[term.WHITE, term.BLACK, term.Pointer.right]]]
+)
