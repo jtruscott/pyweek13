@@ -16,4 +16,4 @@ import state
 import title
 import message
 import battle
-import sounds
+import sound

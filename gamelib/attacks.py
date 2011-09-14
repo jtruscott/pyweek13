@@ -1,7 +1,7 @@
 import random
 class Attack:
     name = "Attack"
-    
+    sound = None
     def __init__(self,
                 numdice=None, dietype=None, damage=0,
                 accuracy=0, status=None,
@@ -71,6 +71,7 @@ class PunchAttack(Attack):
     base_dietype = 4
     base_cooldown = 1
     base_speed = 4
+    sound = 'punch'
     
 class BiteAttack(Attack):
     name = "Bite"
@@ -85,6 +86,7 @@ class EnergyAttack(Attack):
     base_dietype = 3
     base_cooldown = 5
     base_speed = 2
+    sound = 'fry'
 
 class StabAttack(Attack):
     name = "Stab"

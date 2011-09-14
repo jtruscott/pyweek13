@@ -1,4 +1,4 @@
-import screen, event, state, term, player, message, sounds
+import screen, event, state, term, player, message, sound
 import collections, random
 
 import logging
@@ -93,6 +93,7 @@ def battle_prompt():
         idx = selected_attack_index + idx
         selected_attack_index = max(0, min(len(attack_names)-1, idx))
         log.debug('selected_attack_index: %r', selected_attack_index)
+        sound.play('select')
         return
 
     #check for reasons to skip this turn
@@ -324,6 +325,9 @@ def resolve_attack(attacks, owner, target):
             message.add("<LIGHTGREY>%s<DARKGREY> takes <LIGHTRED>%i</> damage! (<GREEN>%i</><BROWN>%+i</>%s)" % (
                                     target.name, damage, damage_roll, damage_mod, armor_penalty_text))
             target.take_damage(damage)
+            if attack.sound:
+                sound.play(attack.sound, channel='attack', wait=True)
+                
             if target.cur_hp <= 0:
                 message.add("<YELLOW>%s was defeated!" % target.name)
                 if target == state.player:
