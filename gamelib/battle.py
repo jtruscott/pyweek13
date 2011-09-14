@@ -81,7 +81,10 @@ def battle_tick():
         #go to the prompt
         return
     if not enemy.cur_tick_delay:
-        enemy.do_action()
+        #enemy AI time
+        attacks = enemy.do_action()
+        if attacks:
+            resolve_attack(attacks, enemy, state.player)
     return
 
 @event.on('battle.prompt')
@@ -127,7 +130,7 @@ def battle_prompt():
 
             else:
                 #selection confirmed
-                resolve_attack(current.attacks, player, enemy)
+                resolve_attack(current.attacks, state.player, enemy)
                 return
 
         elif key == 'up':
@@ -295,6 +298,11 @@ def create_cooldown_buffer(attacks):
     )
     return container
 
+def describe_attack(attacks, owner, target):
+    log.debug("Describing o=%r t=%r", owner, target)
+    format_dict = dict(owner=owner.name, target=target.name)
+    format_dict.update(attacks[0].__dict__)
+    message.add("<WHITE>%s" % (attacks[0].attacktext % format_dict))
 
 def resolve_attack(attacks, owner, target):
     def d20():
@@ -307,22 +315,23 @@ def resolve_attack(attacks, owner, target):
         combo = True
         speed_mod = (len(attacks) - 1)*2
         duration_mod = (len(attacks) - 1)*2
-    
+    describe_attack(attacks, owner, target)
+
     for attack in attacks:
         #to hit
         accuracy_roll = d20()
         accuracy_mod = attack.calc_accuracy(owner) - accuracy_penalty
         hit = (accuracy_roll + accuracy_mod >= target.evasion)
-        accuracy_text = "<DARKGREY>(<GREEN>%i</><BROWN>%+i</> vs <LIGHTGREY>%i</>)" % (
+        accuracy_text = " <DARKGREY>(<GREEN>%i</><BROWN>%+i</> vs <LIGHTGREY>%i</>)" % (
                                     accuracy_roll, accuracy_mod, target.evasion)
         #damage
         if hit:
-            message.add("<LIGHTGREEN>Hit!  %s" % accuracy_text)
+            message.add(" <LIGHTGREEN>Hit!  %s" % accuracy_text)
             damage_roll = d20()
             damage_mod = attack.calc_damage(owner)
             damage = max(0, damage_roll + damage_mod - target.armor)
             armor_penalty_text = target.armor and ("<RED>%+i</>" % target.armor) or ""
-            message.add("<LIGHTGREY>%s<DARKGREY> takes <LIGHTRED>%i</> damage! (<GREEN>%i</><BROWN>%+i</>%s)" % (
+            message.add(" <LIGHTGREY>%s<DARKGREY> takes <LIGHTRED>%i</> damage! (<GREEN>%i</><BROWN>%+i</>%s)" % (
                                     target.name, damage, damage_roll, damage_mod, armor_penalty_text))
             target.take_damage(damage)
             if attack.sound:
@@ -337,7 +346,7 @@ def resolve_attack(attacks, owner, target):
                 break
 
         else:
-            message.add("<LIGHTRED>Miss! %s" % accuracy_text)
+            message.add(" <LIGHTRED>Miss! %s" % accuracy_text)
 
         message.newline()
         #attack bookkeeping
@@ -354,8 +363,10 @@ def enemy_defeated():
     start_battle()
 
 @event.on('player.defeated')
-def enemy_defeated():
+def player_defeated():
     #THERE IS NO ESCAPE
+    while term.getkey() != 'enter':
+        message.add("You are dead.")
     class SadFace(Exception): pass
     raise SadFace(":(")
 

@@ -1,6 +1,9 @@
 import random
 class Attack:
     name = "Attack"
+    base_speed = 4
+    base_cooldown = 2
+    base_accuracy = 0
     sound = None
     def __init__(self,
                 numdice=None, dietype=None, damage=0,
@@ -33,18 +36,16 @@ class Attack:
             
         self.damage = damage
         
-        self.base_accuracy = 0
         self.accuracy = accuracy + self.base_accuracy
         
         self.base_status = None
         if status is not None:
             self.status = status
         
-        self.base_cooldown = 2      #this shouldn't be used, but just in case
         self.cooldown = cooldown + self.base_cooldown
         
-        self.base_speed = 4         #this shouldn't be used, but just in case
         self.speed = speed + self.base_speed
+        self.attacktext = attacktext
     
     def battle_reset(self):
         self.cur_cooldown = 0

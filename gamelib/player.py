@@ -1,6 +1,6 @@
 import random
 import parts
-
+import message
 import logging
 log = logging.getLogger('player')
 
@@ -26,7 +26,7 @@ class Humanoid:
             self.parts[limb] = []
 
     def calc_stats(self):
-        self.hp = 10
+        self.hp = 20
         self.armor = 0
         self.evasion = 10
         self.damage_bonus = 0
@@ -115,4 +115,21 @@ class Enemy(Humanoid):
 
     def do_action(self):
         log.debug("doing action")
-        self.cur_tick_delay = 5
+        all_attacks = [part.attack for part in self.all_parts() if part.attack]
+
+        min_delay = min([attack.cur_cooldown for attack in all_attacks])
+        if min_delay:
+            message.add("<DARKGREY>%s delays for %i" % (self.name, min_delay))
+            self.cur_tick_delay = min_delay
+            return
+        
+        available_attacks = {}
+        for attack in all_attacks:
+            if attack.cur_cooldown:
+                continue
+            available_attacks.setdefault(attack.name, [])
+            available_attacks[attack.name].append(attack)    
+        
+        #build a list of (duration, combo) so we can use max() to find the slowest one
+        dur, chosen_attack = max([((attacks[0].cooldown + ((len(attacks) - 1)*2)), attacks) for attacks in available_attacks.values()])
+        return chosen_attack
