@@ -1,4 +1,4 @@
-import screen, event, state, term, player, message
+import screen, event, state, term, player, message, sounds
 import collections
 
 import logging
@@ -64,7 +64,10 @@ def describe_enemy():
 
 @event.on('battle.prompt')
 def battle_prompt():
-    term.getkey()
+    key = term.getkey()
+
+    #if key == 'down':
+    #    sounds.play('Randomize')
     global i
     i += 1
 
@@ -90,7 +93,7 @@ def list_player_attacks():
     for attack_name, attacks in attack_types.items():
         unsel_buffer = create_attack_buffer(attacks, state.player)
         sel_buffer = create_attack_buffer(attacks, state.player, selected=True)
-        cooldown_buffer = None
+        cooldown_buffer = create_cooldown_buffer(attacks)
 
         player_attacks[attack_name] = attack_tuple(attacks, unsel_buffer, sel_buffer, cooldown_buffer)
 
@@ -168,3 +171,6 @@ def create_attack_buffer(attacks, owner, selected=False):
                     ]
     )
     return container
+
+def create_cooldown_buffer(attacks):
+    return

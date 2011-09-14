@@ -16,3 +16,4 @@ import event
 import title
 import message
 import battle
+import sounds
