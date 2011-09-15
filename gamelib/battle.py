@@ -365,8 +365,6 @@ def enemy_defeated():
 @event.on('player.defeated')
 def player_defeated():
     #THERE IS NO ESCAPE
-    while term.getkey() != 'enter':
-        message.add("You are dead.")
-    class SadFace(Exception): pass
-    raise SadFace(":(")
-
+    message.error("You died!", flip=True)
+    state.mode = 'explore'
+    event.fire('explore.start')

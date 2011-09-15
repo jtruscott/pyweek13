@@ -1,4 +1,4 @@
-import state, screen, term, message
+import event, state, screen, term, message
 import ansiparse
 import os
 
@@ -15,7 +15,7 @@ class Tile:
             self.passable = False
         if char == '\xb2':
             #F3 in tundra
-            #sparkly block, usually reverse color
+            #sparkly block, usually used with reverse color
             self.door = True
         self.fg = fg
         self.bg = bg
@@ -51,6 +51,12 @@ class Room:
         tile = self.tiles[py][px]
         if tile.door:
             message.add("<YELLOW>That's a door!", flip=True)
+        elif tile.char == 'F':
+            message.add("<LIGHTRED>HOLY TOLEDO! ITS A MONSTER!", flip=True)
+            state.mode = 'battle'
+            event.fire('battle.start')
+            raise state.StateChanged()
+
         elif tile.passable:
             self.move_player(px, py)
             return True

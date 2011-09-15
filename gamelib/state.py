@@ -19,6 +19,12 @@ class config:
 #the game's player
 player = None
 
+class StateChanged(Exception):
+    """
+        raise this to bubble all the way back to
+        the state loop in game.py, immediately
+    """
+    pass
 
 @event.on('setup')
 def load_config():

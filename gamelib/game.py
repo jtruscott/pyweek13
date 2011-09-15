@@ -14,10 +14,13 @@ def start():
     event.fire('explore.start')
 
     while state.running:
-        event.fire('%s.tick' % state.mode)
-        event.fire('%s.draw' % state.mode)
-        event.fire('%s.prompt' % state.mode)
-        event.fire('flip')
+        try:
+            event.fire('%s.tick' % state.mode)
+            event.fire('%s.draw' % state.mode)
+            event.fire('%s.prompt' % state.mode)
+            event.fire('flip')
+        except state.StateChanged:
+            continue
     return
 
 @event.on('ctrl-c')
