@@ -48,7 +48,13 @@ def draw_message_log():
     M.message_zone.draw()
     M.pointer.draw()
 
-    message_slice = M.messages[M.scroll_offset:M.scroll_offset + M.text_height]
+    message_slice = M.messages[M.scroll_offset:M.scroll_offset + M.text_height - 1]
+    '''
+    the -1 in that slice fixes an issue where text wasn't scrolling all the way down; there's an arguement to be made
+    that this is not the place where the math error is occurring, but it's not an error in scroll_offset, because the top scroll area
+    is fine. (Try it out - add a -1 to the first scroll_offset there. the text output shits itself.)
+    So unless there's other issues with text_height that point to a math error there, this is where the fix goes.
+    '''
     y = 1
     for i in range(len(message_slice)):
         msg = message_slice[i]

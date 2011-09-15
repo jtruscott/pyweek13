@@ -82,7 +82,7 @@ Exceptions are for types human, ceph, and fire, which have character widths of 6
 
 parts = {
     'head': [
-        Part("Human Head", "A perfectly %(adjective)s human head", "mundane",),
+        Part("Human Head", "A perfectly %(adjective)s human head", "human",),
         Part("Beast Head", "A long, %(adjective)s snout, full of sharp teeth", "animal",
              attack=BiteAttack(damage=1,attacktext="%(owner)s flails at the %(target)s with a puny human fist!")),
         Part("Animalistic Head", "A stout, %(adjective)s face, with eyes full of killing instinct", "animal", damage_bonus=2),
@@ -98,7 +98,7 @@ parts = {
     ],
         
     'body': [
-        Part("Human Torso", "A perfectly %(adjective)s human torso", "human"),
+        Part("Human Torso", "A perfectly %(adjective)s human torso", "human", hp=100, evasion=-8),
         #Part("Strong Human Torso", "A muscular human torso", "human", hp=1),
         Part("Beastly Torso", "A great, furry, %(adjective)s body, rippling with muscle", "animal", hp=8, damage_bonus=2),
         Part("Avian Body", "An agile, %(adjective)s body", "avian", accuracy_bonus=2, evasion=2),
@@ -107,9 +107,9 @@ parts = {
     ],
         
     'legs': [
-        Part("Human Legs", "A perfectly %(adjective)s pair of human legs", "mundane", attack=EnergyAttack(attacktext="Oh no! %(owner)s has a laser gun in its knee!")),
+        Part("Human Legs", "A perfectly %(adjective)s pair of human legs", "human", attack=EnergyAttack(attacktext="Oh no! %(owner)s has a laser gun in its knee!")),
         Part("Beastly Biped Legs", "A pair of great, furry, %(adjective)s legs.", "animal", hp=5, armor=1),
-        Part("Mutantaur Legs", "A matched set of four hoofed $(adjective)s legs.", "animal", armor=2,
+        Part("Mutantaur Legs", "A matched set of four hoofed %(adjective)s legs.", "animal", armor=2,
              attack=TrampleAttack(attacktext="%(owner)s tries to trample %(target)s) in a flurry of hooves!")),
         Part("Chicken Legs", "You ever notice that bird legs are actually kinda freaky? Especially when they're human-sized.", "avian",
              evasion=1, armor=1, hp=2, attack=ClawAttack(attacktext="%(owner)s tries to scratch %(target)s with great oversided chicken legs!", damage=-2)),
@@ -126,7 +126,7 @@ parts = {
         #Part("Strong Human Arm", "A very strong human arm", "human", attack=PunchAttack(damage=1)),
         Part("Beast Limb", "A powerfuly muscled, %(adjective)s limb, ending in sharp claws", "animal",
              attack=ClawAttack(attacktext="%(owner)s rends %(target)s with a sharp claw!")),
-        Part("Bird Limb", "A lean, %(adjective)s limb, ending in sharp claws", "bird",
+        Part("Bird Limb", "A lean, %(adjective)s limb, ending in sharp claws", "avian",
              attack=ClawAttack(speed=-1,damage=-2,attacktext="%(owner)s scratches %(target)s with a deft claw!")),
     ]
 }
