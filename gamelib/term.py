@@ -51,6 +51,9 @@ class Pointer:
     right = chr(0x11)
 
 
+class Room:
+    player = chr(1)
+
 event.on('flip')(flip)
 
 

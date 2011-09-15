@@ -59,6 +59,9 @@ class Humanoid:
             for limb in self.parts[limb_slot]:
                 yield limb
 
+    def explore_reset(self):
+        return
+    
     def battle_reset(self):
         self.cur_hp = self.hp
         self.cur_tick_delay = 0

@@ -15,5 +15,6 @@ import event
 import state
 import title
 import message
+import explore
 import battle
 import sound

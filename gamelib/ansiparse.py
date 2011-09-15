@@ -96,7 +96,7 @@ def parse_escape(f):
         raise Exception(c)
     return ret
 
-def read_to_buffer(f, width=80):
+def read_to_buffer(f, width=80, max_height=None):
     rows = []
     row = []
     fg = term.WHITE
@@ -110,7 +110,7 @@ def read_to_buffer(f, width=80):
             b = _bg
         else:
             b = bg
-        row.append((f, b, c))
+        row.append([f, b, c])
 
     def finish_row():
         while len(row) < width:
@@ -139,6 +139,8 @@ def read_to_buffer(f, width=80):
         else:
             add(c)
     finish_row()
+    if max_height:
+        rows = rows[:max_height]
     buf = screen.Buffer(
         width=width, height=len(rows),
         data=rows
