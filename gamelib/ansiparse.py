@@ -149,10 +149,10 @@ if __name__ == "__main__":
     import WConio as W
     try:
         import sys
-        if not len(sys.argv):
+        if not len(sys.argv) > 1:
             path = os.path.join('..', 'data', 'maps', 'test.ans')
         else:
-            path = sys.argv[0]
+            path = sys.argv[1]
         f = open(path)
         term.init()
         buf = read_to_buffer(f)
