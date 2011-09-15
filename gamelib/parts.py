@@ -109,7 +109,7 @@ parts = {
     'legs': [
         Part("Human Legs", "A perfectly %(adjective)s pair of human legs", "human", attack=EnergyAttack(attacktext="Oh no! %(owner)s has a laser gun in its knee!")),
         Part("Beastly Biped Legs", "A pair of great, furry, %(adjective)s legs.", "animal", hp=5, armor=1),
-        Part("Mutantaur Legs", "A matched set of four hoofed $(adjective)s legs.", "animal", armor=2,
+        Part("Mutantaur Legs", "A matched set of four hoofed %(adjective)s legs.", "animal", armor=2,
              attack=TrampleAttack(attacktext="%(owner)s tries to trample %(target)s) in a flurry of hooves!")),
         Part("Chicken Legs", "You ever notice that bird legs are actually kinda freaky? Especially when they're human-sized.", "avian",
              evasion=1, armor=1, hp=2, attack=ClawAttack(attacktext="%(owner)s tries to scratch %(target)s with great oversided chicken legs!", damage=-2)),

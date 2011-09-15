@@ -48,8 +48,9 @@ def reset():
 def resize(h, w):
     import subprocess
     subprocess.call(['mode', 'con', 'lines=%i' % h, 'cols=%i' % w], shell=True)
-    subprocess.call(["mode con cp select=437"], shell=True)
+    #subprocess.call(["mode", "con", "cp", "select=437"], shell=True)
     #since we have subprocess already here... this is as good a place as any to set the 437 codepage.
+    #commented out because I'm not confident it does anything, but if we find out we do need it, it's here.
         
     
 def restore():
