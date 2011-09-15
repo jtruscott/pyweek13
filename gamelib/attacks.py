@@ -43,8 +43,13 @@ class Attack:
             self.status = status
         
         self.cooldown = cooldown + self.base_cooldown
+        if self.cooldown < 1:
+            self.cooldown = 1
         
         self.speed = speed + self.base_speed
+        if self.speed < 1:
+            self.speed = 1        
+        
         self.attacktext = attacktext
     
     def battle_reset(self):
@@ -112,14 +117,14 @@ class BeatAttack(Attack):
     
 class TrampleAttack(Attack):
     name = "Trample"
-    base_numdice = 1
-    base_dietype = 4
-    base_cooldown = 2
+    base_numdice = 4
+    base_dietype = 3
+    base_cooldown = 4
     base_speed = 4
     
 class ClawAttack(Attack):
     name = "Rend"
     base_numdice = 1
-    base_dietype = 4
+    base_dietype = 6
     base_cooldown = 1
-    base_speed = 4
+    base_speed = 3
