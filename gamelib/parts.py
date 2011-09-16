@@ -107,18 +107,23 @@ parts = {
     ],
         
     'legs': [
-        Part("Human Legs", "A perfectly %(adjective)s pair of human legs", "human", attack=EnergyAttack(attacktext="Oh no! %(owner)s has a laser gun in its knee!")),
+        Part("Human Legs", "A perfectly %(adjective)s pair of human legs", "human"),
         Part("Beastly Biped Legs", "A pair of great, furry, %(adjective)s legs.", "animal", hp=5, armor=1),
         Part("Mutantaur Legs", "A matched set of four hoofed %(adjective)s legs.", "animal", armor=2,
              attack=TrampleAttack(attacktext="%(owner)s tries to trample %(target)s) in a flurry of hooves!")),
         Part("Chicken Legs", "You ever notice that bird legs are actually kinda freaky? Especially when they're human-sized.", "avian",
              evasion=1, armor=1, hp=2, attack=ClawAttack(attacktext="%(owner)s tries to scratch %(target)s with great oversided chicken legs!", damage=-2)),
+        Part("Arachnid Legs", "Two legs are better than one; eight legs are SIGNIFICANTLY better than two.", "bug"),
+        Part("Octopoid Legs", "What's better than eight legs? Eight TENTACLES!", "ceph", hp=10,
+             attack=BeatAttack())
     ],
         
     'tail': [
         Part("Basic Thagomizer", "An articulated tail with a wicked array of pointy bits and bony\ngrowths at the end.", "animal", armor=1, hp=2,
              attack=BeatAttack(attacktext="%(owner)s thagomizes %(target)s mightily!")),
         Part("Prehensile Tail", "A flexible, $(adjective)s tail that helps provide balance.", "animal", evasion=2),
+        Part("Scorpion Stinger", "An armored tail with a great, wicked stinger.", "bug", armor=1,
+             attack=StabAttack(dietype=8,attacktext="%(owner)s stabs at %(target)s with a great scorpion tail!")),
     ],
 
     'limbs': [
@@ -128,5 +133,7 @@ parts = {
              attack=ClawAttack(attacktext="%(owner)s rends %(target)s with a sharp claw!")),
         Part("Bird Limb", "A lean, %(adjective)s limb, ending in sharp claws", "avian",
              attack=ClawAttack(speed=-1,damage=-2,attacktext="%(owner)s scratches %(target)s with a deft claw!")),
+        Part("Chitinous Claw", "A dark-colored, %(adjective)s pinching claw", "bug", armor=1,
+             attack=ClawAttack(damage=2,attacktext="%(owner)s tries to grab tight with a great scorpionlike claw!")),
     ]
 }
