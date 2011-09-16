@@ -32,9 +32,13 @@ def draw_explore():
     
 @event.on('explore.start')
 def start_explore():
-    level.room = room.create_room('ns_test.ans')
+    level.room = room.create_room('floor1/template.ans')
     state.player.explore_reset()
 
+@event.on('explore.resume')
+def resume_explore():
+    state.after_battle_tile.clear()
+    level.room.move_player(*state.after_battle_pos)
 
 @event.on('explore.tick')
 def explore_tick():

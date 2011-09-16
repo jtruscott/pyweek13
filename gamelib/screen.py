@@ -41,15 +41,14 @@ class Text(Buffer):
         A specialized buffer for displaying text.
         The RichText subclass displays colorable text.
 
-        center_to=x centers the text to X characters
-        wrap_to=x wraps the text every X characters. incompatible with center_to.
+        center_to=x centers the text to X characters. Only usable on Text.
+        wrap_to=x wraps the text every X characters. incompatible with center_to. only usable on RichText.
     """
-    def __init__(self, message, fg=term.WHITE, bg=term.BLACK, center_to=None, wrap_to=None, **kwargs):
+    def __init__(self, message, fg=term.WHITE, bg=term.BLACK, center_to=None, **kwargs):
         self.message = self.base_message = message
         self.fg = fg
         self.bg = bg
         self.center_to = center_to
-        self.wrap_to = wrap_to
 
         Buffer.__init__(self, width=0, height=1, data=None, **kwargs)
         self.update_data()
@@ -70,20 +69,6 @@ class Text(Buffer):
         
         for c in msg:
            data.append((self.fg, self.bg, c))
-        
-        if self.wrap_to and len(data) > self.wrap_to:
-            width = self.wrap_to
-            wrapped_data = []
-            for i in range(0, len(data), width):
-                chunk = data[i:i+width]
-                while len(chunk) < width:
-                    chunk.append((self.fg, self.bg, ' '))
-                wrapped_data.append(chunk)
-
-            self.width = width
-            self.height = len(wrapped_data)
-            #log.debug('wd: %r', wrapped_data)
-            self.data = wrapped_data
 
         else:
             self.width = len(data)
@@ -94,44 +79,59 @@ class Text(Buffer):
 
 class RichText(Text):
     colorRE = re.compile(r'([^<]*)<([\w]*|/)>')
-    
+    def __init__(self, message, center_to=None, wrap_to=None, **kwargs):
+        self.wrap_to = wrap_to
+        if center_to:
+            raise AttributeError("Not allowed in richtext")
+
+        Text.__init__(self, message, **kwargs)
     def update_data(self):
-        data = []
-        message_parts, total_len = self.parse()
-        if self.center_to:
-            data.extend([(self.fg, self.bg, ' ')]*((self.center_to - total_len)/2))
+        rows = []
+        row = []
+        message_parts = self.parse()
         
+        #build
         for part_color, part_text in message_parts:
             for c in part_text:
-                data.append((part_color, self.bg, c))
-
-        if self.center_to:
-            data.extend([(self.fg, self.bg, ' ')]*((self.center_to - total_len)/2))
+                if c == '\n':
+                    rows.append(row)
+                    row = []
+                    continue
+                row.append((part_color, self.bg, c))
         
-        if self.wrap_to and len(data) > self.wrap_to:
+        rows.append(row)
+
+        #wrap
+        if self.wrap_to:
             width = self.wrap_to
-            wrapped_data = []
-            for i in range(0, len(data), width):
-                chunk = data[i:i+width]
-                while len(chunk) < width:
-                    chunk.append((self.fg, self.bg, ' '))
-                wrapped_data.append(chunk)
+            new_rows = []
+            for row in rows:
+                if len(row) > width:
+                    wrapped_data = []
+                    for i in range(0, len(row), width):
+                        chunk = row[i:i+width]
+                        new_rows.append(chunk)
+                else:
+                    new_rows.append(row)
+            rows = new_rows
 
-            self.width = width
-            self.height = len(wrapped_data)
-            #log.debug('wd: %r', wrapped_data)
-            self.data = wrapped_data
-
-        else:
-            self.width = len(data)
-            self.data = [data]
+        #pad
+        width = max([len(r) for r in rows])
+        for row in rows:
+            while len(row) < width:
+                row.append((self.fg, self.bg, ' '))
+        
+        
+        #finish
+        self.width = width
+        self.height = len(rows)
+        self.data = rows
         self.dirty = True
 
     def parse(self):
         raw_msg = self.message.rstrip('\n')
         raw_parts = filter(None, self.colorRE.split(raw_msg))
         message_parts = []
-        total_len = 0
         color_stack = [term.LIGHTGREY]
         for part in raw_parts:
             if part == '/':
@@ -143,10 +143,8 @@ class RichText(Text):
             else:
                 #it's a text component
                 message_parts.append((color_stack[-1], part))
-                total_len += len(part)
-
         #log.debug("len: %r parts: %r", total_len, message_parts)
-        return message_parts, total_len
+        return message_parts
 
 
 #----------------------------------------------------------------------

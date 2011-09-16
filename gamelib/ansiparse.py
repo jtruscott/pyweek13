@@ -117,7 +117,12 @@ def parse_escape(f):
         raise Exception(c)
     return ret
 
-def read_to_buffer(f, width=80, max_height=None):
+def read_to_buffer(f, width=80, max_height=None, crop=False):
+    """
+        if crop, kill rows at :width
+        otherwise, let them wrap into new rows.
+        we need both :(
+    """
     rows = []
     row = []
     fg = term.WHITE
@@ -131,13 +136,18 @@ def read_to_buffer(f, width=80, max_height=None):
             b = _bg
         else:
             b = bg
+        #log("f: %r b: %r c: %r (%r)" % (f, b, c, hex(ord(c))))
         row.append([f, b, c])
 
     def finish_row():
         log("finishing row")
         while len(row) < width:
             add(' ')
-        rows.append(row)
+        if crop:
+            xrow = row[:width]
+        else:
+            xrow = row
+        rows.append(xrow)
         fg = term.WHITE
 
     while True:
@@ -160,7 +170,7 @@ def read_to_buffer(f, width=80, max_height=None):
             row = []
         else:
             add(c)
-        if len(row) >= width:
+        if not crop and len(row) >= width:
             finish_row()
             row = []
     finish_row()
@@ -174,20 +184,29 @@ def read_to_buffer(f, width=80, max_height=None):
 
 if __name__ == "__main__":
     import WConio as W
+    x = 0
+    def show(filename):
+        global x
+        f = open(filename)
+        buf = read_to_buffer(f)
+        buf.x = x
+        x += buf.width
+        buf.draw()
     try:
         import sys
         if not len(sys.argv) > 1:
-            path = os.path.join('..', 'data', 'maps', 'test.ans')
+            print "nom nom need argument"
         else:
-            path = sys.argv[1]
-        f = open(path)
-        term.init()
-        buf = read_to_buffer(f)
-        buf.draw()
-        term.flip()
+            term.init()
+            show(sys.argv[1])
+            if len(sys.argv) > 2:
+                show(sys.argv[2])
+            term.flip()
+        W.settitle("Mutants Of Melimnor")
+        term.getkey()
 
     except:
-        W.textmode()
         raise
     finally:
+        W.textmode()
         W.textcolor(W.LIGHTGREY)

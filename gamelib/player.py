@@ -6,6 +6,9 @@ log = logging.getLogger('player')
 
 class Humanoid:
     name = "Humanoid"
+    base_hp = 20
+    bonus_hp = 0
+
     slots = [
         'head',
         'body',
@@ -26,7 +29,7 @@ class Humanoid:
             self.parts[limb] = []
 
     def calc_stats(self):
-        self.hp = 20
+        self.hp = self.base_hp + self.bonus_hp
         self.armor = 0
         self.evasion = 10
         self.damage_bonus = 0

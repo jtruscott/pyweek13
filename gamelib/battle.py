@@ -47,13 +47,13 @@ def start_battle():
 
 def describe_enemy():
     enemy_zone.children = [
-        screen.RichText("Before you is a %s with %i hp!" % (enemy.name, enemy.hp), x=1, y=2, center_to=enemy_zone.width-2, wrap_to=enemy_zone.width-2),
+        screen.RichText("Before you is a %s with %i hp!" % (enemy.name, enemy.hp), x=1, y=2, wrap_to=enemy_zone.width-2),
     ]
     y = 4
     def make_part_buffer(slot, part):
         return screen.RichText(
-            "its %s: %s" % (slot, (part.description % part.__dict__)),
-            x=1,y=y, center_to=enemy_zone.width-2, wrap_to=enemy_zone.width-2
+            "%s:\n    %s" % (slot.replace("_", " ").title(), (part.description % part.__dict__).replace("\n","\n    ")),
+            x=1,y=y, wrap_to=enemy_zone.width-2
         )
 
     for slot in enemy.slots:
@@ -359,8 +359,9 @@ def resolve_attack(attacks, owner, target):
 
 @event.on('enemy.defeated')
 def enemy_defeated():
-    #THERE IS NO ESCAPE
-    start_battle()
+    state.mode = 'explore'
+    event.fire('explore.resume')
+    raise state.StateChanged()
 
 @event.on('player.defeated')
 def player_defeated():

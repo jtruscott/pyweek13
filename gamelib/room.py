@@ -8,6 +8,9 @@ log = logging.getLogger('room')
 class Tile:
     passable = True
     door = False
+    is_pickup = False
+    picked_up = False
+
     def __init__(self, fg, bg, char):
         if char == '\xdb':
             #F4 in tundra
@@ -17,9 +20,20 @@ class Tile:
             #F3 in tundra
             #sparkly block, usually used with reverse color
             self.door = True
+        if char == '\xfa':
+            #F10 in Set 6 in tundra
+            #centered period, used as a health pickup
+            self.is_pickup = True
+            self.pickup_type = "health"
         self.fg = fg
         self.bg = bg
         self.char = char
+
+    def clear(self):
+        self.passable = True
+        self.char = ' '
+        self.picked_up = True
+
 
 class Room:
     def __init__(self, player_x, player_y, name, buf):
@@ -55,9 +69,18 @@ class Room:
             message.add("<LIGHTRED>HOLY TOLEDO! ITS A MONSTER!", flip=True)
             state.mode = 'battle'
             event.fire('battle.start')
+            state.after_battle_tile = tile
+            state.after_battle_pos = (px, py)
             raise state.StateChanged()
 
         elif tile.passable:
+            if tile.is_pickup and not tile.picked_up:
+                #they found a thing!
+                if tile.pickup_type == "health":
+                    message.add("<GREEN>You found a <LIGHTGREEN>Stone Of Health</>!", flip=True)
+                    state.player.bonus_hp += 1
+                tile.clear()
+
             self.move_player(px, py)
             return True
         else:
@@ -94,6 +117,5 @@ def create_room(name):
     filename = os.path.join('data','maps',name)
     f = open(filename)
     #the width math here is a little wonky, sorry
-    buf = ansiparse.read_to_buffer(f, width=state.config.viewport_width-1, max_height=state.config.viewport_height-2)
-    buf.width -= 1
+    buf = ansiparse.read_to_buffer(f, width=state.config.viewport_width-2, max_height=state.config.viewport_height-2, crop=True)
     return Room(10, 10, name, buf)
