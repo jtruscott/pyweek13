@@ -16,6 +16,7 @@ log = logging.getLogger('main')
 def main():
     log.debug('Starting up')
     term.init()
+    term.settitle('Mutants Of Melimnor    (PyWeek #13: Mutate!)')
     try:
         event.fire('setup')
         game.start()

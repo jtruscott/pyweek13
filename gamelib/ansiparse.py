@@ -1,8 +1,11 @@
 import os, os.path
 import screen, term
 
+DEBUG = False
 out = open('ansi.log', 'w')
 def log(m):
+    if not DEBUG:
+        return
     out.write(m)
     out.write('\n')
     out.flush()

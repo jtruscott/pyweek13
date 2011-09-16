@@ -71,6 +71,8 @@ def draw_message_log():
 
 @event.on('scroll')
 def scroll_message(rel=0, home=False, end=False):
+    if state.mode not in ('battle', 'explore'):
+        return
     if home:
         off = 0
     elif end:

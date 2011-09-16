@@ -10,8 +10,8 @@ def start():
     log.debug("Game starting")
 
     state.new_state()
-    state.mode = 'explore'
-    event.fire('explore.start')
+    state.mode = 'title'
+    event.fire('%s.start' % state.mode)
 
     while state.running:
         try:
