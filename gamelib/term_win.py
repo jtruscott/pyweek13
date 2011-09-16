@@ -83,7 +83,7 @@ def draw_buffer(buf, x, y):
 def render_buffer(buf):
     text = []
     for row in buf.data:
-        for fg, bg, ch in row:
+        for fg, bg, ch in row[:buf.width]:
              color = chr(fg + (bg << 4))
              text.append(ch)
              text.append(color)

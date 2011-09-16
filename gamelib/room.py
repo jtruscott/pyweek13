@@ -93,5 +93,7 @@ def create_room(name):
     log.debug("Creating room: %r", name)
     filename = os.path.join('data','maps',name)
     f = open(filename)
-    buf = ansiparse.read_to_buffer(f, width=state.config.viewport_width-2, max_height=state.config.viewport_height-2)
+    #the width math here is a little wonky, sorry
+    buf = ansiparse.read_to_buffer(f, width=state.config.viewport_width-1, max_height=state.config.viewport_height-2)
+    buf.width -= 1
     return Room(10, 10, name, buf)

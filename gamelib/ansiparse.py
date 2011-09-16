@@ -1,6 +1,12 @@
 import os, os.path
 import screen, term
 
+out = open('ansi.log', 'w')
+def log(m):
+    out.write(m)
+    out.write('\n')
+    out.flush()
+
 class Escape:
     meaning = None #ha!
     args = []
@@ -24,8 +30,18 @@ color_map = {
     (1, 36): term.LIGHTCYAN,
     (1, 37): term.WHITE,
 }
-def lookup_color(bold, id):
-    return color_map[(bold, id)]
+last_color = 37
+def lookup_color(bold, id=None):
+    global last_color
+    log('lookup: (%r,%r) lc %r' % (bold, id, last_color))
+    if id is None:
+        id = last_color
+    elif id >= 40:
+        id -= 10
+    else:
+        last_color = id
+    color = color_map[(bold, id)]
+    return color
 
 
 #rrrgh global state
@@ -80,18 +96,23 @@ def parse_escape(f):
         ret.bg = None
         for arg in args:
             if arg == 1:
-                bold = True
+                bold = 1
                 ret.bold = True
+                log("bolding")
+                ret.fg = lookup_color(bold, None)
             if arg == 0:
-                bold = False
-                ret.fg = term.WHITE
+                bold = 0
+                log("un bolding")
+                ret.fg = lookup_color(bold, None)
                 ret.bg = term.BLACK
             if 30 <= arg <= 37:
+                log("fg %r" % arg)
                 ret.fg = lookup_color(bold, arg)
             if 40 <= arg <= 47:
                 #bg colors 40-47 are the same as 30-37
                 #oh, but backgrounds can't be bold. sorry.
-                ret.bg = lookup_color(0, arg-10)
+                log("bg %r" % arg)
+                ret.bg = lookup_color(0, arg)
     else:
         raise Exception(c)
     return ret
@@ -113,6 +134,7 @@ def read_to_buffer(f, width=80, max_height=None):
         row.append([f, b, c])
 
     def finish_row():
+        log("finishing row")
         while len(row) < width:
             add(' ')
         rows.append(row)
@@ -138,6 +160,9 @@ def read_to_buffer(f, width=80, max_height=None):
             row = []
         else:
             add(c)
+        if len(row) >= width:
+            finish_row()
+            row = []
     finish_row()
     if max_height:
         rows = rows[:max_height]
