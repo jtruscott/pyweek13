@@ -86,6 +86,7 @@ def level_prompt():
             action, args = ret
             if action == 'changeroom':
                 level.layout.change_room(*args)
+                draw_explore()
     
     return
 

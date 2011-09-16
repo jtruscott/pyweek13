@@ -8,6 +8,7 @@ log = logging.getLogger('room')
 class Tile:
     passable = True
     door = False
+    warp = False
     is_pickup = False
     picked_up = False
 
@@ -21,6 +22,10 @@ class Tile:
             #F2 in Set 5 in tundra,
             #double crosspiece. indicates a door.
             self.door = True
+        if char == '\xE8':
+            #F5 in Set 5 in tundra
+            #portally thing. indicates warp to next level.
+            self.warp = True
 
         if char == '\xfa':
             #F10 in Set 6 in tundra
@@ -75,14 +80,16 @@ class Room:
         px = self.player_x + x
         py = self.player_y + y
         if px < 0 or py < 0 or px >= self.width or py >= self.height:
-            message.error("nope.jpg", flip=True)
+            message.error("You cannot exit the map.", flip=True)
             return False
         
         tile = self.tiles[py][px]
         if tile.door:
-            message.add("<YELLOW>That's a door!", flip=True)
+            message.add("<YELLOW>You enter the next room.", flip=True)
             return ("changeroom", (x, y))
-            
+        elif tile.warp:
+            message.add("<YELLOW>You descend into the darkness.", flip=True)
+            return ("changelevel", None)
         elif tile.char == 'F':
             message.add("<LIGHTRED>HOLY TOLEDO! ITS A MONSTER!", flip=True)
             state.mode = 'battle'
@@ -102,7 +109,7 @@ class Room:
             self.move_player(px, py)
             return True
         else:
-            message.error("impassible", flip=True)
+            message.error("Something is in the way.", flip=True)
         return False
 
     def move_player(self, px, py):

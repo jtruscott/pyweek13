@@ -13,6 +13,7 @@ def log(m):
 class Escape:
     meaning = None #ha!
     args = []
+    key = None
 
 color_map = {
     (0, 30): term.BLACK,
@@ -50,7 +51,7 @@ def lookup_color(bold, id=None):
 #rrrgh global state
 bold = 0
 
-def parse_escape(f):
+def parse_escape(f, is_key=False):
     """
         Parse an ANSI escape code.
         Return (some type of meaning, some values)
@@ -70,8 +71,9 @@ def parse_escape(f):
         return default
 
     def end_arg():
-        arg_int = int(''.join(arg))
-        args.append(arg_int)
+        if len(arg):
+            arg_int = int(''.join(arg))
+            args.append(arg_int)
 
     while True:
         c = f.read(1)
@@ -88,10 +90,12 @@ def parse_escape(f):
             arg.append(c)
     end_arg()
     ret.args = args
+    #drawing escape sequences
     if c == 'C':
         #move
         ret.meaning = 'move_x'
         ret.x = arg_or(0, 1)
+        ret.key = 'right'
 
     elif c == 'm':
         ret.meaning = 'color'
@@ -116,8 +120,20 @@ def parse_escape(f):
                 #oh, but backgrounds can't be bold. sorry.
                 log("bg %r" % arg)
                 ret.bg = lookup_color(0, arg)
+    
+    #key escape sequences
+    elif c == 'A':
+        ret.key = 'up'
+    elif c == 'B':
+        ret.key = 'down'
+    elif c == 'D':
+        ret.key = 'left'
     else:
-        raise Exception(c)
+        if is_key:
+            ret.key = 'unknown'
+            ret.c = c
+        else:
+            raise Exception(c)
     return ret
 
 def read_to_buffer(f, width=80, max_height=None, crop=False):

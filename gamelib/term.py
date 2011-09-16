@@ -75,12 +75,14 @@ def getkey():
     '''
     while True:
         key = raw_getkey()
+        if key is None:
+            continue
         if key in ['home', 'pgup', 'pgdn', 'end']:
             #message scroll
             if key == 'home': event.fire('scroll', home=True)
             if key == 'pgup': event.fire('scroll', rel= -1)
             if key == 'pgdn': event.fire('scroll', rel= 1)
-            if key == 'home': event.fire('scroll', end=True)
+            if key == 'end': event.fire('scroll', end=True)
         elif key == '\x03':
             #ctrl-c
             event.fire('ctrl-c')

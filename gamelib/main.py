@@ -33,4 +33,4 @@ def main():
     finally:
         log.debug('Shutting down')
         logging.shutdown()
-        #term.restore()
+        term.restore()
