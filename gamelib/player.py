@@ -1,4 +1,5 @@
 import random
+import event
 import parts
 import message
 import logging
@@ -139,3 +140,18 @@ class Enemy(Humanoid):
         #build a list of (duration, combo) so we can use max() to find the slowest one
         dur, chosen_attack = max([((attacks[0].cooldown + ((len(attacks) - 1)*2)), attacks) for attacks in available_attacks.values()])
         return chosen_attack
+
+
+@event.on('setup')
+def setup_player_statblock():
+    global statblock
+    import screen
+    import state
+    conf = state.config
+    statblock = screen.make_box(
+        width=conf.width - conf.viewport_width,
+        height=conf.height - conf.viewport_height,
+        x=0,
+        y=conf.height - conf.viewport_height,
+        draw_top=False,
+    )

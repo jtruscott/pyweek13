@@ -16,12 +16,14 @@ def setup_battle_ui():
     action_height = conf.height - conf.viewport_height
     action_zone = screen.make_box(conf.width, action_height,
                                 y=conf.height - action_height,
-                                border_fg=term.YELLOW,
+                                border_fg=term.BLUE,
+                                draw_top=False,
                                 
     )
     enemy_zone = screen.make_box(conf.viewport_width, conf.viewport_height,
                                 x=conf.width - conf.viewport_width,
-                                border_fg=term.RED,
+                                border_fg=term.BLUE,
+                                boxtype=term.BoxSingle,
     )
 
 @event.on('battle.draw')

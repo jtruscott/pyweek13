@@ -1,9 +1,9 @@
-import event, message, term, state, screen, room
+import event, message, term, state, screen, room, layouts
 
 import logging
 log = logging.getLogger('explore')
 class level:
-    room = None
+    layout = None
     input_mode = 'level'
 
 @event.on('setup')
@@ -14,25 +14,29 @@ def setup_explore_ui():
     action_height = conf.height - conf.viewport_height
     action_zone = screen.make_box(conf.width, action_height,
                                 y=conf.height - action_height,
-                                border_fg=term.YELLOW,
+                                border_fg=term.BLUE,
+                                draw_top=False,
                                 
     )
     viewport = screen.make_box(conf.viewport_width, conf.viewport_height,
                                 x=conf.width - conf.viewport_width,
-                                border_fg=term.RED,
+                                border_fg=term.BLUE,
+                                boxtype=term.BoxSingle,
     )
 
 @event.on('explore.draw')
 def draw_explore():
     viewport.draw()
-    level.room.draw(viewport)
+    level.layout.curr_room.draw(viewport)
 
     action_zone.draw()
 
     
 @event.on('explore.start')
 def start_explore():
-    level.room = room.create_room('floor1/template.ans')
+    level.layout = layouts.start_layout
+    level.layout.setup()
+
     state.player.explore_reset()
 
 @event.on('explore.resume')
@@ -57,26 +61,31 @@ def level_prompt():
     while True:
         event.fire('flip')
 
+        ret = False
         key = term.getkey()
         if key == 'enter':
             return
 
         elif key == 'up':
-            if level.room.try_move(y=-1):
-                return
+            ret = level.layout.curr_room.try_move(y=-1)
 
         elif key == 'down':
-            if level.room.try_move(y=+1):
-                return
+            ret = level.layout.curr_room.try_move(y=+1)
 
         elif key == 'left':
-            if level.room.try_move(x=-1):
-                return
+            ret = level.layout.curr_room.try_move(x=-1)
 
         elif key == 'right':
-            if level.room.try_move(x=+1):
-                return
-
+            ret = level.layout.curr_room.try_move(x=+1)
+        
+        if not ret:
+            continue
+        elif ret is True:
+            return
+        else:
+            action, args = ret
+            if action == 'changeroom':
+                level.layout.change_room(*args)
     
     return
 

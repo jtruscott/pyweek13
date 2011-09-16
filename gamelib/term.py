@@ -38,6 +38,17 @@ class BoxDouble:
     tr = chr(0xBB)
     br = chr(0xBC)
 
+class BoxSingle(BoxDouble):
+    horiz = chr(0xC4)
+    vert = chr(0xB3)
+    tl = chr(0xDA)
+    bl = chr(0xC0)
+    tr = chr(0xBF)
+    br = chr(0xD9)
+
+
+
+
 class BoxMessage(BoxDouble):
     vert = chr(0xB3)
     tr = chr(0xB8)
@@ -52,7 +63,7 @@ class Pointer:
 
 
 class Room:
-    player = chr(1)
+    player = chr(2)
 
 event.on('flip')(flip)
 

@@ -16,10 +16,12 @@ class Tile:
             #F4 in tundra
             #full block, used as walls
             self.passable = False
-        if char == '\xb2':
-            #F3 in tundra
-            #sparkly block, usually used with reverse color
+
+        if char == '\xCE':
+            #F2 in Set 5 in tundra,
+            #double crosspiece. indicates a door.
             self.door = True
+
         if char == '\xfa':
             #F10 in Set 6 in tundra
             #centered period, used as a health pickup
@@ -36,24 +38,38 @@ class Tile:
 
 
 class Room:
-    def __init__(self, player_x, player_y, name, buf):
-        self.player_x = player_x
-        self.player_y = player_y
+    start_x = 1
+    start_y = 1
+
+    player_x = -1
+    player_y = -1
+    player_color = term.WHITE
+    def __init__(self, name, buf, prop=None):
         self.name = name
         self.buf = buf
+        self.prop = prop
 
         self.height = len(buf.data)
         self.width = len(buf.data[0])
-        self.parse_tiles()
-        self.move_player(player_x,player_y)
+        self.parse_tiles() 
+        
 
     def parse_tiles(self):
         self.tiles = []
+        y = 0
         for data_row in self.buf.data:
             row = []
+            x = 0
             for fg, bg, char in data_row:
+                if char == '$':
+                    char = ' '
+                    self.start_x = x
+                    self.start_y = y
+                    self.player_color = fg
                 row.append(Tile(fg, bg, char))
+                x += 1
             self.tiles.append(row)
+            y += 1
 
     def try_move(self, x=0, y=0):
         px = self.player_x + x
@@ -65,6 +81,8 @@ class Room:
         tile = self.tiles[py][px]
         if tile.door:
             message.add("<YELLOW>That's a door!", flip=True)
+            return ("changeroom", (x, y))
+            
         elif tile.char == 'F':
             message.add("<LIGHTRED>HOLY TOLEDO! ITS A MONSTER!", flip=True)
             state.mode = 'battle'
@@ -93,15 +111,13 @@ class Room:
         tile = self.tiles[self.player_y][self.player_x]
         data = self.buf.data[self.player_y][self.player_x]
         data[0] = tile.fg
-        data[1] = tile.bg
         data[2] = tile.char
 
         self.player_x = px
         self.player_y = py
         
         data = self.buf.data[self.player_y][self.player_x]
-        data[0] = term.LIGHTGREEN
-        data[1] = term.BLACK
+        data[0] = self.player_color
         data[2] = term.Room.player
         self.buf.dirty = True
 
@@ -112,10 +128,12 @@ class Room:
         )
 
 
-def create_room(name):
+def create_room(name, **kwargs):
     log.debug("Creating room: %r", name)
     filename = os.path.join('data','maps',name)
     f = open(filename)
-    #the width math here is a little wonky, sorry
     buf = ansiparse.read_to_buffer(f, width=state.config.viewport_width-2, max_height=state.config.viewport_height-2, crop=True)
-    return Room(10, 10, name, buf)
+    
+    room = Room(name, buf, **kwargs)
+    room.move_player(room.start_x,room.start_y)
+    return room
