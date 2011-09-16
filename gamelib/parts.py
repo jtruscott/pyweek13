@@ -111,9 +111,9 @@ parts = {
         Part("Beastly Biped Legs", "A pair of great, furry, %(adjective)s legs.", "animal", hp=5, armor=1),
         Part("Mutantaur Legs", "A matched set of four hoofed %(adjective)s legs.", "animal", armor=2,
              attack=TrampleAttack(attacktext="%(owner)s tries to trample %(target)s) in a flurry of hooves!")),
-        Part("Chicken Legs", "You ever notice that bird legs are actually kinda freaky? Especially when they're human-sized.", "avian",
+        Part("Chicken Legs", "You ever notice that bird legs are actually kinda freaky?\nEspecially when they're human-sized.", "avian",
              evasion=1, armor=1, hp=2, attack=ClawAttack(attacktext="%(owner)s tries to scratch %(target)s with great oversided chicken legs!", damage=-2)),
-        Part("Arachnid Legs", "Two legs are better than one; eight legs are SIGNIFICANTLY better than two.", "bug"),
+        Part("Arachnid Legs", "Two legs are better than one; eight legs are SIGNIFICANTLY better\nthan two.", "bug"),
         Part("Octopoid Legs", "What's better than eight legs? Eight TENTACLES!", "ceph", hp=10,
              attack=BeatAttack())
     ],
@@ -135,5 +135,9 @@ parts = {
              attack=ClawAttack(speed=-1,damage=-2,attacktext="%(owner)s scratches %(target)s with a deft claw!")),
         Part("Chitinous Claw", "A dark-colored, %(adjective)s pinching claw", "bug", armor=1,
              attack=ClawAttack(damage=2,attacktext="%(owner)s tries to grab tight with a great scorpionlike claw!")),
+        Part("Crab Claw", "An oversized orange crustacean claw.", "fish", armor=1, hp=2,
+             attack=ClawAttack(numdice=2, dietype=8, speed=-1, attacktext="CRAB... BATTLE")),
+        Part("Tentacle", "A big, purple, %(adjective)s tentacle.", "ceph", hp=5,
+             attack=BeatAttack(attacktext="%(owner)s tries to attack %(target)s with an enormous tentacle! But in a totally non-sexual way.", damage=1)),
     ]
 }
