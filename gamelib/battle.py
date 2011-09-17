@@ -342,7 +342,7 @@ def resolve_attack(attacks, owner, target):
             damage_roll = d20()
             damage_mod = attack.calc_damage(owner)
             damage = max(0, damage_roll + damage_mod - target.armor)
-            armor_penalty_text = target.armor and ("<RED>%+i</>" % target.armor) or ""
+            armor_penalty_text = target.armor and ("<RED>%+i</>" % -target.armor) or ""
             message.add(" <LIGHTGREY>%s<DARKGREY> takes <LIGHTRED>%i</> damage! (<GREEN>%i</><BROWN>%+i</>%s)" % (
                                     target.name, damage, damage_roll, damage_mod, armor_penalty_text))
             target.take_damage(damage)
@@ -372,6 +372,7 @@ def resolve_attack(attacks, owner, target):
 @event.on('enemy.defeated')
 def enemy_defeated():
     state.player.reset_hp()
+    state.player.mutate()
     state.mode = 'explore'
     event.fire('explore.resume')
     raise state.StateChanged()

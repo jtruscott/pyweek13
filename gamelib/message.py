@@ -63,6 +63,10 @@ def draw_message_log():
     for i in range(slice_start,M.last_message_idx+1): #+1 because range is exclusive
         msg = M.messages[i]
         #log.debug("i: %r y: %r msg: %r", i, y, msg.message)
+        if y + msg.height > M.text_height:
+            #uh oh, overflow
+            log.debug("Overflowing! y=%r, i=%r", y, i)
+            break
         msg.x = 1 + M.message_zone.x
         msg.y = y
         msg.dirty = True

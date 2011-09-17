@@ -15,7 +15,6 @@ class Humanoid:
         'body',
         'legs',
 
-        'back',
         'tail',
     ]
     limbs = [
@@ -85,6 +84,18 @@ class Humanoid:
         log.debug("%s taking %r damage", self.name, damage)
         self.cur_hp = max(0, self.cur_hp - damage)
 
+    def random_part(self, slot):
+        if slot in self.limbs:
+            slot = 'limbs'
+        return random.choice(parts.parts[slot])
+
+    def add_part(self, slot, part):
+        log.debug("adding a %r part: %r", slot, part.name)
+        if slot in self.limbs:
+            self.parts[slot].append(part)
+        else:
+            self.parts[slot] = part
+
 class Player(Humanoid):
     name = "Player"
     cur_hp = 0
@@ -106,6 +117,58 @@ class Player(Humanoid):
         self.parts['left_arm'] = [parts.by_name['Human Arm']]
         self.parts['right_arm'] = [parts.by_name['Human Arm']]
 
+    def mutate(self):
+        #find something new
+        log.debug("Mutating!")
+        message.add("<MAGENTA>The curse of Melimnor twists your body!", flip=True)
+        while True:
+            slot = random.choice(self.slots + self.limbs)
+            part = self.random_part(slot)
+            log.debug("Testing a %r part %r", slot, part.name)
+            if 'Human' in part.name:
+                #can never go back, buddy
+                continue
+            if slot in self.limbs:
+                old_part = random.choice(self.parts[slot])
+                if part.name == old_part.name:
+                    #that wouldn't be much of a mutation
+                    continue
+            else:
+                old_part = self.parts[slot]
+                if old_part and part.name == old_part.name:
+                    #that wouldn't be much of a mutation
+                    continue
+
+            break
+        #set it
+        log.debug("Chose a %r part %r", slot, part.name)
+        if slot in self.limbs:
+            idx = self.parts[slot].index(old_part)
+            self.parts[slot][idx] = part
+        else:
+            self.parts[slot] = part
+        #tell them about it            
+        slot_name = slot.replace("_", " ").title()
+        if old_part:
+            message.add("<LIGHTMAGENTA>Your %s mutates into a %s!" % (slot_name, part.name), flip=True)
+        else:
+            message.add("<LIGHTMAGENTA>A %s sprouts from your %s!" % (part.name, slot_name), flip=True)
+
+        self.calc_stats()
+
+    def add_limb(self):
+        log.debug("Adding limb!")
+        message.add("<MAGENTA>The magic of Melimnor grants you a new limb!", flip=True)
+        slot = random.choice(self.limbs)
+        part = self.random_part(slot)
+        self.add_part(slot, part)
+
+        slot_name = slot.replace("_", " ").title()
+        message.add("<LIGHTMAGENTA>You now have a new %s on your %s!" % (part.name, slot_name), flip=True)
+
+        self.calc_stats()
+
+        
 
 class Enemy(Humanoid):
     name = "Mutant"
@@ -163,18 +226,6 @@ class Enemy(Humanoid):
             log.debug("adding a %r to the %r", new_limb.name, slot)
             self.parts[slot].append(new_limb)
         log.debug("generation complete")
-    
-    def random_part(self, slot):
-        if slot in self.limbs:
-            slot = 'limbs'
-        return random.choice(parts.parts[slot])
-
-    def add_part(self, slot, part):
-        log.debug("adding a %r part: %r", slot, part.name)
-        if slot in self.limbs:
-            self.parts[slot].append(part)
-        else:
-            self.parts[slot] = part
 
     def do_action(self):
         log.debug("doing action")

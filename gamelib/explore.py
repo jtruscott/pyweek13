@@ -96,6 +96,13 @@ def level_prompt():
         key = term.getkey()
         if key == 'enter':
             return
+        
+        elif key == 'f3':
+            #TAKE ME OUT BEFORE RELEASE
+            state.player.mutate()
+        elif key == 'f4':
+            #TAKE ME OUT BEFORE RELEASE
+            state.player.add_limb()
 
         elif key == 'up':
             ret = level.layout.curr_room.try_move(y=-1)
