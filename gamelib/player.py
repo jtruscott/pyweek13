@@ -113,7 +113,7 @@ class Player(Humanoid):
         self.parts['head'] = parts.by_name['Human Head']
         self.parts['body'] = parts.by_name['Human Torso']
         self.parts['legs'] = parts.by_name['Human Legs']
-        self.parts['back'] = None
+        #self.parts['back'] = None
         self.parts['tail'] = None
 
         self.parts['left_arm'] = [parts.by_name['Human Arm']]

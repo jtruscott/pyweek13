@@ -12,7 +12,8 @@ def d_power_calc(hp, armor, evasion):
     hp_coeff = 1
     armor_coeff = 4
     evasion_coeff = 2
-    power = (hp * hp_coeff) + (armor * armor_coeff) + (evasion * evasion_coeff)
+    d_value = (hp * hp_coeff) + (armor * armor_coeff) + (evasion * evasion_coeff)
+    power = int(floor(d_value/10))  #no time for fancy adjustable brackets, doctor jones
     return power
 
 words = {
@@ -107,9 +108,9 @@ a point of DR is worth four points of HP.
     Power   HP
     0       0
     1       10
-    2       25
-    3       40
-    4       55
+    2       20
+    3       30
+    4       40
     
 Here are the ranges of attack values for parts that grant defense, in average damage per tick (discounting cooldown)
     Power   DPT
@@ -139,15 +140,17 @@ parts = {
              attack=BiteAttack(numdice=2, dietype=5, speed=-1, attacktext="JAWS 7: %(owner)s VERSUS %(target)s IN MORTAL COMBAT!")),
         Part("Swordfish Head", "A long, %(adjective)s head, with an enormous, bony spike protrouding\nfrom the end", "fish",
              attack=StabAttack(numdice=2, dietype=4, speed=-1, attacktext="%(owner)s lunges with at %(target)s with the enormous spike coming out of its face!")),
+        Part("Owl Head", "A great tawny owl's head, with a particularly vicious-looking beak", "animal", hp=20,
+             attack=BiteAttack(numdice=2, dietype=8, attacktext="%(owner)s tries to take a chunk out of %(target)s with a great beak!")),
     ],
         
     'body': [
-        Part("Human Torso", "A perfectly %(adjective)s human torso", "human", hp=10),
+        Part("Human Torso", "A perfectly %(adjective)s human torso", "human", hp=5),
         #Part("Strong Human Torso", "A muscular human torso", "human", hp=1),
         Part("Beastly Torso", "A great, furry, %(adjective)s body, rippling with muscle", "animal", hp=8, damage_bonus=2),
         Part("Avian Body", "An agile, %(adjective)s body", "avian", accuracy_bonus=2, evasion=2),
         Part("Scaled Torso", "A %(adjective)s torso covered in thick, durable scales", "fish", armor=3, hp=5),
-        
+        Part("Feathered Torso", "A great ursine torso with feathers on it.\nWait, what bears have feathers?", "animal", hp=25, armor=2),
     ],
         
     'legs': [
@@ -159,7 +162,10 @@ parts = {
              evasion=1, armor=1, hp=2, attack=ClawAttack(attacktext="%(owner)s tries to scratch %(target)s with great oversided chicken legs!", damage=-2)),
         Part("Arachnid Legs", "A quadrapedal array of four %(adjective)s legs", "bug"),
         Part("Octopoid Legs", "Eight %(adjective)s tentacles, where legs should be", "ceph", hp=10,
-             attack=BeatAttack())
+             attack=BeatAttack()),
+        Part("Bear Legs", "A particularly stocky pair of ursine legs", "animal", hp=30, armor=1),
+        #Part("Helicopter Legs", "A great helicopter propellor where a lower torso should be")
+        
     ],
         
     'tail': [
@@ -184,7 +190,9 @@ parts = {
              attack=ClawAttack(numdice=2, dietype=8, speed=-1, attacktext="CRAB... BATTLE")),
         Part("Tentacle", "A big, purple, %(adjective)s tentacle", "ceph", hp=5,
              attack=BeatAttack(attacktext="%(owner)s tries to attack %(target)s with an enormous tentacle! But in a totally non-sexual way.", damage=1)),
-    ]
+        Part("Feathered Arm", "A mammalian arm, yet covered in feathers, with razor-sharp claws", "animal",
+             attack=ClawAttack(numdice=4, dietype=6, attacktext="%(owner)s lashes out with razor-sharp claws!")),
+             ]
 }
 
 if __name__ == "__main__":
