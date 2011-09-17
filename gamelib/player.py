@@ -2,6 +2,8 @@ import random
 import event
 import parts
 import message
+import sound
+
 import logging
 log = logging.getLogger('player')
 
@@ -110,6 +112,10 @@ class Player(Humanoid):
 
         self.reset_status()
         update_player_statblock(self)
+    
+    def take_damage(self, damage):
+        Humanoid.take_damage(self, damage)
+        sound.play('hit', channel='hit', wait=True)
 
     def reset_body(self):
         self.parts['head'] = parts.get_part(parts.by_name['Human Head'])
