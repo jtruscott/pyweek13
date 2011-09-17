@@ -7,6 +7,8 @@ class level:
     layout = None
     input_mode = 'level'
 
+    been_cursed = False
+
 @event.on('setup')
 def setup_explore_ui():
 
@@ -98,6 +100,13 @@ def level_prompt():
 
         ret = False
         key = term.getkey()
+        if key in ('up', 'down', 'left', 'right') and not level.been_cursed:
+            message.newline()
+            message.add("The curse of Melimnor takes hold upon you!")
+            state.player.add_limb()
+            message.newline()
+            level.been_cursed = True
+        
         if key == 'enter':
             return
         
