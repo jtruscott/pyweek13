@@ -1,4 +1,4 @@
-import event, state, screen, term, message
+import event, state, screen, term, message, player
 import ansiparse
 import os
 
@@ -134,6 +134,9 @@ class Room:
                 if tile.pickup_type == "health":
                     message.add("<GREEN>You found a <LIGHTGREEN>Stone Of Health</>!", flip=True)
                     state.player.bonus_hp += 1
+                    state.player.cur_hp += 1
+                    state.player.hp += 1
+                    player.update_player_statblock(state.player)
                 tile.clear()
 
             self.move_player(px, py)

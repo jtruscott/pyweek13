@@ -1,4 +1,4 @@
-import event, message, term, state, screen, room, layouts
+import event, message, term, state, screen, room, layouts, player
 import sound
 
 import logging
@@ -34,9 +34,12 @@ def draw_explore():
 
 def add_room_messages():
     messages = level.layout.curr_room.explore_messages
+    statblock = player.statblock
+    player.update_player_statblock(state.player)
+    
+    x = statblock.width + statblock.x + 1
     y = 1
-    x = 1
-    texts = []
+    texts = [statblock]
     for message in messages:
         text = screen.RichText(message, x=x, y=y, wrap_to=action_zone.width-2)
         texts.append(text)
@@ -49,9 +52,11 @@ def start_explore():
     sound.play('appear')
     level.layout = layouts.start_layout()
     level.layout.setup()
+    state.player.reset_hp()
+    state.player.explore_reset()
+    
     add_room_messages()
 
-    state.player.explore_reset()
     message.add("""
 <LIGHTGREY>This is the cursed isle of <WHITE>Melimnor</>,
 spoke of in legend to be rife with hideous,
@@ -64,6 +69,7 @@ it's shores. It is eerily quiet here.
 @event.on('explore.resume')
 def resume_explore():
     state.after_battle_tile.clear()
+    state.player.reset_hp()
     level.layout.curr_room.move_player(*state.after_battle_pos)
     action_zone.dirty = True
     for child in action_zone.children:

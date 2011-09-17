@@ -184,7 +184,10 @@ def list_player_attacks():
     attack_names = attack_types.keys()
 
 def draw_player_attacks():
-    x_base = x = 1
+    statblock = player.statblock
+    player.update_player_statblock(state.player)
+
+    x_base = x = statblock.x + statblock.width + 1
     x_skip = 21
     
     y_base = y = 1
@@ -192,7 +195,7 @@ def draw_player_attacks():
     y_max = 8
 
     sel_x = sel_y = 0
-    attacks = []
+    attacks = [statblock]
     for attack_name in attack_names:
         attack_tuple = player_attacks[attack_name]
         
@@ -367,6 +370,7 @@ def resolve_attack(attacks, owner, target):
 
 @event.on('enemy.defeated')
 def enemy_defeated():
+    state.player.reset_hp()
     state.mode = 'explore'
     event.fire('explore.resume')
     raise state.StateChanged()

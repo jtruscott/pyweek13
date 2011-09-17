@@ -58,6 +58,7 @@ class Text(Buffer):
         self.update_data()
     
     def format(self, fmt):
+        log.debug("formatting: (%r) into (%r)", fmt, self.base_message)
         self.message = self.base_message % fmt
         self.update_data()
 

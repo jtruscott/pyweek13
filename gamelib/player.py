@@ -72,6 +72,9 @@ class Humanoid:
         for part in self.all_parts():
             part.battle_reset()
     
+    def reset_hp(self):
+        self.cur_hp = self.hp
+    
     def battle_tick(self):
         if self.cur_tick_delay:
             self.cur_tick_delay -= 1
@@ -84,12 +87,14 @@ class Humanoid:
 
 class Player(Humanoid):
     name = "Player"
+    cur_hp = 0
     def __init__(self, *args, **kwargs):
         Humanoid.__init__(self, *args, **kwargs)
         self.reset_body()
         self.calc_stats()
 
         self.reset_status()
+        update_player_statblock(self)
 
     def reset_body(self):
         self.parts['head'] = parts.by_name['Human Head']
@@ -192,17 +197,46 @@ class Enemy(Humanoid):
         dur, chosen_attack = max([((attacks[0].cooldown + ((len(attacks) - 1)*2)), attacks) for attacks in available_attacks.values()])
         return chosen_attack
 
-
 @event.on('setup')
 def setup_player_statblock():
     global statblock
     import screen
-    import state
+    import state, term
+        
     conf = state.config
     statblock = screen.make_box(
-        width=conf.width - conf.viewport_width,
+        width=(conf.width - conf.viewport_width) / 2,
         height=conf.height - conf.viewport_height,
         x=0,
-        y=conf.height - conf.viewport_height,
+        y=0,
+        border_fg=term.BLUE,
         draw_top=False,
     )
+    statblock.children = [
+        screen.RichText(x=1, y=1, message="<WHITE>%s" % ("Player".center(statblock.width-2))),
+        screen.RichText(x=1, y=2, message="HP: <%s>%i<LIGHTGREY> / <WHITE>%i</>"),
+        screen.RichText(x=1, y=3, message="Armor:   <WHITE>%i</>"),
+        screen.RichText(x=1, y=4, message="Evasion: <WHITE>%i</>"),
+        screen.RichText(x=1, y=5, message="+Atk:   <WHITE>%i</>"),
+        screen.RichText(x=1, y=6, message="+Dmg:   <WHITE>%i</>"),
+    ]
+
+def update_player_statblock(player):
+    global statblock
+
+    name, hp, armor, evasion, atk, dmg = statblock.children
+    
+    hp_color = 'LIGHTRED'
+    hp_pct = float(player.cur_hp) / player.hp
+
+    if hp_pct > 0.33:
+        hp_color = 'YELLOW'
+    if hp_pct > 0.66:
+        hp_color = 'LIGHTGREEN'
+
+    hp.format((hp_color, player.cur_hp, player.hp))
+    armor.format((player.armor))
+    evasion.format((player.evasion))
+    atk.format((player.accuracy_bonus))
+    dmg.format((player.damage_bonus))
+    statblock.dirty = True
