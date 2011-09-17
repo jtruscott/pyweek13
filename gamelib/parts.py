@@ -154,7 +154,7 @@ parts = {
         Part("Human Legs", "A perfectly %(adjective)s pair of human legs", "human"),
         Part("Beastly Biped Legs", "A pair of great, furry, %(adjective)s legs.", "animal", hp=5, armor=1),
         Part("Mutantaur Legs", "A matched set of four hoofed %(adjective)s legs.", "animal", armor=2,
-             attack=TrampleAttack(attacktext="%(owner)s tries to trample %(target)s) in a flurry of hooves!")),
+             attack=TrampleAttack(attacktext="%(owner)s tries to trample %(target)s) in a flurry of hooves!", numdice=3, speed=1)),
         Part("Chicken Legs", "A pair of alarmingly oversized %(owner)s legs, with talons", "avian",
              evasion=1, armor=1, hp=2, attack=ClawAttack(attacktext="%(owner)s tries to scratch %(target)s with great oversided chicken legs!", damage=-2)),
         Part("Arachnid Legs", "A quadrapedal array of four %(adjective)s legs", "bug"),
@@ -164,10 +164,10 @@ parts = {
         
     'tail': [
         Part("Basic Thagomizer", "An articulated tail with a wicked array of pointy bits and bony\ngrowths at the end.", "animal", armor=1, hp=2,
-             attack=BeatAttack(attacktext="%(owner)s thagomizes %(target)s mightily!")),
+             attack=BeatAttack(attacktext="%(owner)s thagomizes %(target)s mightily!", dietype=8)),
         Part("Prehensile Tail", "A flexible, $(adjective)s tail that helps provide balance.", "animal", evasion=2),
         Part("Scorpion Stinger", "An armored tail with a great, wicked stinger.", "bug", armor=1,
-             attack=StabAttack(dietype=8,attacktext="%(owner)s stabs at %(target)s with a great scorpion tail!")),
+             attack=StabAttack(dietype=8,attacktext="%(owner)s stabs at %(target)s with a great scorpion tail!", numdice=2)),
     ],
 
     'limbs': [
@@ -175,14 +175,14 @@ parts = {
              attack=PunchAttack(attacktext="%(owner)s flails pathetically at %(target)s with a measly human fist!")),
         #Part("Strong Human Arm", "A very strong human arm", "human", attack=PunchAttack(damage=1)),
         Part("Beast Limb", "A powerfuly muscled, %(adjective)s limb, ending in sharp claws", "animal",
-             attack=ClawAttack(attacktext="%(owner)s rends %(target)s with a sharp claw!"), damage=1),
+             attack=ClawAttack(attacktext="%(owner)s rends %(target)s with a sharp claw!", damage=1)),
         Part("Bird Limb", "A lean, %(adjective)s limb, ending in sharp claws", "avian",
              attack=ClawAttack(speed=-1,attacktext="%(owner)s scratches %(target)s with a deft claw!")),
-        Part("Chitinous Claw", "A dark-colored, %(adjective)s pinching claw", "bug", armor=1,
+        Part("Chitinous Claw", "A dark-colored, %(adjective)s pinching claw", "bug", armor=1, hp=5,
              attack=ClawAttack(damage=2,attacktext="%(owner)s tries to grab tight with a great scorpionlike claw!")),
-        Part("Crab Claw", "An oversized orange crustacean claw.", "fish", armor=1, hp=2,
+        Part("Crab Claw", "An oversized, orange crustacean claw", "fish", armor=1, hp=2,
              attack=ClawAttack(numdice=2, dietype=8, speed=-1, attacktext="CRAB... BATTLE")),
-        Part("Tentacle", "A big, purple, %(adjective)s tentacle.", "ceph", hp=5,
+        Part("Tentacle", "A big, purple, %(adjective)s tentacle", "ceph", hp=5,
              attack=BeatAttack(attacktext="%(owner)s tries to attack %(target)s with an enormous tentacle! But in a totally non-sexual way.", damage=1)),
     ]
 }
