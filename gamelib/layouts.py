@@ -83,9 +83,10 @@ groups = {
     #general tiles
     'e': ['e-1.ans'],
     'w': ['w-1.ans'],
-    'n': None,
+    'n': ['n-1.ans'],
 
     'ws': None,
+    'ns': ['ns-1.ans'],
     
     'wse': ['wse-1.ans'],
     'nse': ['nse-1.ans'],
@@ -93,6 +94,7 @@ groups = {
     #special tiles
     'beach': ['beach.ans'],
     'ruins': ['ruins.ans'],
+    'victory': ['victory.ans']
 }
 
 def start_layout():
@@ -103,17 +105,16 @@ def start_layout():
 #random dungeon layouts
 dungeon_layouts = [
     Layout([
-        ['e,start',  'wse',  'w'],
-        [None,       'nse',  'ws'],
-        [None,       'n,boss','n,key'],
+        ['e,start',  'wse',  'w,key'],
+        [None,       'ns',  None],
+        [None,       'n,boss',None],
     ]),
 
-    #Layout([
-    #]),
+    Layout([['victory,start']]),
 ]
 
 
 def random_layout():
-    layout = random.choice(dungeon_layouts)
+    layout = dungeon_layouts.pop(0)
     layout.setup()
     return layout
