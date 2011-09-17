@@ -138,6 +138,9 @@ class Room:
                     state.player.cur_hp += 1
                     state.player.hp += 1
                     player.update_player_statblock(state.player)
+                if tile.pickup_type == "key":
+                    message.add("<GREEN>You found a <LIGHTGREEN>Boss Key</>!", flip=True)
+                    state.found_key = True
                 tile.clear()
 
             self.move_player(px, py)

@@ -131,6 +131,7 @@ def level_prompt():
             elif action == 'changelevel':
                 log.debug("changing level")
                 level.layout = layouts.random_layout()
+                state.found_key = False
                 add_room_messages()
                 draw_explore()
                 message.add("<LIGHTRED>The stairs vanish behind you!")

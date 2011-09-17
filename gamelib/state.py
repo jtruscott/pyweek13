@@ -18,6 +18,7 @@ class config:
 
 #the game's player
 player = None
+found_key = False
 
 class StateChanged(Exception):
     """
