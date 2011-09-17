@@ -371,8 +371,9 @@ def resolve_attack(attacks, owner, target):
 
 @event.on('enemy.defeated')
 def enemy_defeated():
-    state.player.reset_hp()
     state.player.mutate()
+    state.player.reset_hp()
+    player.update_player_statblock(state.player)
     state.mode = 'explore'
     event.fire('explore.resume')
     raise state.StateChanged()
