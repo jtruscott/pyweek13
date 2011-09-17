@@ -149,12 +149,21 @@ def create_room(name, **kwargs):
     #add some fluff
     if name == "beach.ans":
         room.explore_messages = [
-        "<LIGHTBLUE>You are surrounded by water, with no other islands anywhere on the horizon",
+        "<LIGHTBLUE>You are surrounded by water, with no other islands anywhere on the horizon.",
         "<YELLOW>There is a faded trail leading off to the east."
         ]
     if name == "ruins.ans":
         room.explore_messages = [
         "<YELLOW>The trail leads to a massive shrine of unknown origin.",
-        "<WHITE>In the center of the shrine is a chasm with stairs leading down...",
+        "<WHITE>In the center of the shrine is a chasm with stairs leading down.",
+        ]
+    if name == "e-1.ans":
+        room.explore_messages = [
+        "<WHITE>The room sparkles with impossibly beautiful gems.",
+        ]
+    if name == "wse-1.ans":
+        room.explore_messages = [
+        "<LIGHTGREEN>This room is terrifyingly unnatural.",
+        "<LIGHTMAGENTA>Your sanity begs you to leave quickly.",
         ]
     return room

@@ -30,13 +30,14 @@ def init():
 
 #----------------------------------------------------------------------------
 #Actual functions
-
+all_dirty = False
 def flip():
     '''
         Ensure the screen is up-to-date with any virtual shenanigans involved.
-        Only needed by curses.
+        Only really needed by curses.
     '''
-    pass
+    global all_dirty
+    all_dirty = False
 
 def reset():
     '''

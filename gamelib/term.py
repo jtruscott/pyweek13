@@ -21,8 +21,6 @@ except ImportError:
         print "This program requires either WConio or Curses!"
         sys.exit(1)
 
-#set this to redraw all buffers
-all_dirty = False
 
 @event.on('setup')
 def term_setup():

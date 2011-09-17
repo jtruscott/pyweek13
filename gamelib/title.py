@@ -32,3 +32,18 @@ def title_prompt():
             event.fire('explore.start')
             state.mode = 'explore'
             raise state.StateChanged()
+
+
+@event.on('defeat.start')
+def start_defeat():
+    pass
+@event.on('defeat.prompt')
+def defeat_prompt():
+    import message
+    while True:
+        event.fire('flip')
+        key = term.getkey()
+        if key == 'down':
+            message.scroll_message(rel=-1)
+        if key == 'up':
+            message.scroll_message(rel=1)

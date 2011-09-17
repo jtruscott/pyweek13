@@ -87,7 +87,7 @@ groups = {
 
     'ws': None,
     
-    'wse': None,
+    'wse': ['wse-1.ans'],
     'nse': None,
 
     #special tiles
@@ -95,9 +95,10 @@ groups = {
     'ruins': ['ruins.ans'],
 }
 
-start_layout = Layout([
-    ['beach,start', 'ruins']
-])
+def start_layout():
+    return Layout([
+        ['beach,start', 'ruins']
+    ])
 
 #random dungeon layouts
 dungeon_layouts = [

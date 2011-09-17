@@ -47,7 +47,7 @@ def add_room_messages():
 @event.on('explore.start')
 def start_explore():
     sound.play('appear')
-    level.layout = layouts.start_layout
+    level.layout = layouts.start_layout()
     level.layout.setup()
     add_room_messages()
 
@@ -65,6 +65,9 @@ it's shores. It is eerily quiet here.
 def resume_explore():
     state.after_battle_tile.clear()
     level.layout.curr_room.move_player(*state.after_battle_pos)
+    action_zone.dirty = True
+    for child in action_zone.children:
+        child.dirty = True
 
 @event.on('explore.tick')
 def explore_tick():

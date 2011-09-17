@@ -37,6 +37,7 @@ def setup_message_ui():
 
 @event.on('battle.draw')
 @event.on('explore.draw')
+@event.on('defeat.draw')
 def draw_message_log():
     M.message_zone.dirty = True
     M.message_zone.draw()

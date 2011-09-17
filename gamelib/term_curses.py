@@ -39,7 +39,7 @@ def uni(c):
     return c.decode('cp437').encode('utf-8')
 #----------------------------------------------------------------------------
 #Actual functions
-
+all_dirty = False
 def flip():
     '''
         Ensure the screen is up-to-date with any virtual shenanigans involved.
@@ -47,6 +47,8 @@ def flip():
     '''
     scr.noutrefresh()
     C.doupdate()
+    global all_dirty
+    all_dirty = False
 
 def reset():
     '''
