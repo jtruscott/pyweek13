@@ -171,7 +171,7 @@ parts = {
         spec_part("Beastly Biped Legs", "A pair of great, furry, %(adjective)s legs.", "animal", hp=5, armor=1),
         spec_part("Mutantaur Legs", "A matched set of four hoofed %(adjective)s legs.", "animal", armor=2,
              attack_spec=dict(cls=TrampleAttack, attacktext="%(owner)s tries to trample %(target)s) in a flurry of hooves!", numdice=3, speed=1)),
-        spec_part("Chicken Legs", "A pair of alarmingly oversized %(owner)s legs, with talons", "avian",
+        spec_part("Chicken Legs", "A pair of alarmingly oversized %(adjective)s legs, with talons", "avian",
              evasion=1, armor=1, hp=2, attack_spec=dict(cls=ClawAttack, attacktext="%(owner)s tries to scratch %(target)s with great oversided chicken legs!", damage=-2)),
         spec_part("Arachnid Legs", "A quadrapedal array of four %(adjective)s legs", "bug"),
         spec_part("Octopoid Legs", "Eight %(adjective)s tentacles, where legs should be", "ceph", hp=10,
