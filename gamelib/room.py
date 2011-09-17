@@ -41,6 +41,12 @@ class Tile:
             else:
                 self.is_pickup = True
                 self.pickup_type = 'key'
+        if char == '\x9b':
+            #F7 in Set 5 in tundra
+            #Cent symbol, used as an artifact of power
+            self.is_pickup = True
+            self.pickup_type = 'macguffin'
+
         if char == 'E':
             #E for Enemy!
             #New: Color determines relative difficulty level
@@ -141,6 +147,9 @@ class Room:
                 if tile.pickup_type == "key":
                     message.add("<GREEN>You found a <LIGHTGREEN>Boss Key</>!", flip=True)
                     state.found_key = True
+                if tile.pickup_type == "macguffin":
+                    state.player.quest_accuracy_bonus += 1
+                    state.player.found_artifacts += 1
                 tile.clear()
 
             self.move_player(px, py)
@@ -207,6 +216,16 @@ def create_room(name, prop):
     if name == 'nse-1.ans':
         room.explore_messages = [
         "<LIGHTGREY>Flooding has taken over much of this cavern.",
+        ]
+    if name == 'ns-1.ans':
+        room.explore_messages = [
+        "<LIGHTGREEN>This room is lush with plant life. You feel a bit like a bug in a forest.",
+        ]
+    if name == 'victory.ans':
+        room.explore_messages = [
+        "<WHITE>Congratulations! You are victorious over the magic of Melimnor.",
+        "<LIGHTGREY>We hope you had fun.",
+        "<DARKGREY>Thanks for playing!",
         ]
     #prop messages
     if prop == 'key':

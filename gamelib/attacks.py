@@ -95,16 +95,17 @@ class Attack:
             self.cur_cooldown -= 1
         
     def calc_min_damage(self, owner):
-        return self.numdice + self.damage
+        return self.numdice + self.damage + owner.damage_bonus
 
     def calc_max_damage(self, owner):
-        return self.numdice*self.dietype + self.damage
+        return self.numdice*self.dietype + self.damage + owner.damage_bonus
 
     def calc_damage(self, owner):
+        #not adding damage or damage_bonus here because it's displayed seperately
         return sum([random.randint(1,self.dietype) for d in range(self.numdice)])
 
     def calc_accuracy(self, owner):
-        return self.accuracy + self.damage
+        return self.accuracy + owner.accuracy_bonus
 
 class PunchAttack(Attack):
     name = "Punch"
