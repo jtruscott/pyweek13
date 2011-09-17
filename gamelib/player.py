@@ -8,7 +8,7 @@ log = logging.getLogger('player')
 class Humanoid:
     name = "Humanoid"
     base_hp = 20
-    bonus_hp = 0
+    bonus_hp = 30
     quest_accuracy_bonus = 0
 
     slots = [

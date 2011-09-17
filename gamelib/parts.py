@@ -178,7 +178,7 @@ parts = {
              attack_spec=dict(cls=BeatAttack, )),
         spec_part("Bear Legs", "A particularly stocky pair of ursine legs", "animal", hp=30, armor=1),
         #spec_part("Helicopter Legs", "A great helicopter propeller where a lower torso should be", evasion=3,
-         #    attack_spec=dict(cls=SlashAttack, )
+        #     attack_spec=dict(cls=SlashAttack, numdice=2, attacktext="%(owner)s targets %(target)s with a buttfull of whirling blades!")),
         
     ],
         
@@ -209,7 +209,3 @@ parts = {
              ]
 }
 
-if __name__ == "__main__":
-    from random import choice
-    foo = random.choice(parts["limbs"])
-    print foo.power
