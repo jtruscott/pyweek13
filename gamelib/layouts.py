@@ -82,7 +82,7 @@ groups = {
     
     #general tiles
     'e': ['e-1.ans'],
-    'w': None,
+    'w': ['w-1.ans'],
     'n': None,
 
     'ws': None,

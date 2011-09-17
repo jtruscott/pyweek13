@@ -104,21 +104,72 @@ class Player(Humanoid):
 
 class Enemy(Humanoid):
     name = "Mutant"
-    def __init__(self, *args, **kwargs):
+    def __init__(self, flag=None, *args, **kwargs):
         Humanoid.__init__(self, *args, **kwargs)
-        self.generate_body()
+        self.generate_body(flag)
         self.calc_stats()
 
         self.reset_status()
 
-    def generate_body(self):
-        for slot in ['head', 'body', 'legs']:
-            self.parts[slot] = self.random_part(slot)
-        for limb in self.limbs:
-            self.parts[limb] = [self.random_part('limbs')]
+    def generate_body(self, flag):
+        log.debug("Generating %s-class enemy", flag)
+        #start off human-like
+        base_parts = {
+            'head': parts.by_name['Human Head'],
+            'body': parts.by_name['Human Torso'],
+            'legs': parts.by_name['Human Legs'],
+            'left_arm': parts.by_name['Human Arm'],
+            'right_arm': parts.by_name['Human Arm'],
+        }
+        #determine how mutated to be
+        #note that max_extra_limbs is randomly subsetted again
+        mutation_count = 3
+        max_extra_limbs = 0
+        if flag == 'super_easy':
+            mutation_count = 1
+        elif flag == 'easy':
+            mutation_count = 2
+        elif flag == 'jesus_christ':
+            mutation_count = len(base_parts)
+            max_extra_limbs = 6
+        else:
+            mutation_count = random.randint(0, len(base_parts)-1)
+            max_extra_limbs = random.randint(0,4)
 
+        #do some mutatin'
+        for i in range(mutation_count):
+            slot = random.choice(base_parts.keys())
+            part = self.random_part(slot)
+            log.debug("mutating the %r into a %r", slot, part.name)
+            self.add_part(slot, part)
+            #take it out of the base_parts set so we don't re-mutate the same component
+            del base_parts[slot]
+        
+        #put the regular, unmutated bits in
+        for slot, part in base_parts.items():
+            self.add_part(slot, part)
+
+        #do some farm-fresh limb growin'
+        extra_limbs = random.randint(0, max_extra_limbs)
+        log.debug("adding %r extra limbs", extra_limbs)
+        for i in range(max_extra_limbs):
+            new_limb = self.random_part('limbs')
+            slot = random.choice(['left_arm', 'right_arm'])
+            log.debug("adding a %r to the %r", new_limb.name, slot)
+            self.parts[slot].append(new_limb)
+        log.debug("generation complete")
+    
     def random_part(self, slot):
+        if slot in self.limbs:
+            slot = 'limbs'
         return random.choice(parts.parts[slot])
+
+    def add_part(self, slot, part):
+        log.debug("adding a %r part: %r", slot, part.name)
+        if slot in self.limbs:
+            self.parts[slot].append(part)
+        else:
+            self.parts[slot] = part
 
     def do_action(self):
         log.debug("doing action")

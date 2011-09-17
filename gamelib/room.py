@@ -11,8 +11,9 @@ class Tile:
     warp = False
     is_pickup = False
     picked_up = False
+    monster = False
 
-    def __init__(self, fg, bg, char):
+    def __init__(self, fg, bg, char, prop=None):
         if char == '\xdb':
             #F4 in tundra
             #full block, used as walls
@@ -26,12 +27,38 @@ class Tile:
             #F5 in Set 5 in tundra
             #portally thing. indicates warp to next level.
             self.warp = True
-
+        
         if char == '\xfa':
             #F10 in Set 6 in tundra
             #centered period, used as a health pickup
             self.is_pickup = True
             self.pickup_type = "health"
+        if char == 'K':
+            #K for Key!
+            #Hidden if 'key' is not the room's property
+            if prop != 'key':
+                char = ' '
+            else:
+                self.is_pickup = True
+                self.pickup_type = 'key'
+        if char == 'E':
+            #E for Enemy!
+            #New: Color determines relative difficulty level
+            #Others = Totally Random
+            self.monster = True
+            if fg == term.LIGHTGREEN:
+                #Lightgreen = Super Easy (1 non-human part, two limbs)
+                self.monster_properties = 'super_easy'
+            elif fg == term.GREEN:
+                #Green = Easy (2 non-human parts, two limbs)
+                self.monster_properties = 'easy'
+            elif fg == term.LIGHTRED:
+                self.monster_properties = 'jesus_christ'
+            else:
+                self.monster_properties = 'random'
+
+
+
         self.fg = fg
         self.bg = bg
         self.char = char
@@ -72,7 +99,7 @@ class Room:
                     self.start_x = x
                     self.start_y = y
                     self.player_color = fg
-                row.append(Tile(fg, bg, char))
+                row.append(Tile(fg, bg, char, self.prop))
                 x += 1
             self.tiles.append(row)
             y += 1
@@ -93,10 +120,10 @@ class Room:
             message.add("<YELLOW>You descend into the darkness.", flip=True)
             return ("changelevel", (None,))
 
-        elif tile.char == 'F':
-            message.add("<LIGHTRED>HOLY TOLEDO! ITS A MONSTER!", flip=True)
+        elif tile.monster:
+            message.add("<LIGHTRED>You attack the monster!", flip=True)
             state.mode = 'battle'
-            event.fire('battle.start')
+            event.fire('battle.start', tile.monster_properties)
             state.after_battle_tile = tile
             state.after_battle_pos = (px, py)
             raise state.StateChanged()

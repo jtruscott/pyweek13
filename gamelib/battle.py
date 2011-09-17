@@ -35,9 +35,9 @@ def draw_battle():
 
     
 @event.on('battle.start')
-def start_battle():
+def start_battle(enemy_flag='random'):
     global enemy, selected_attack_index
-    enemy = player.Enemy()
+    enemy = player.Enemy(flag=enemy_flag)
     describe_enemy()
 
     state.player.battle_reset()
@@ -52,9 +52,13 @@ def describe_enemy():
         screen.RichText("Before you is a %s with %i hp!" % (enemy.name, enemy.hp), x=1, y=2, wrap_to=enemy_zone.width-2),
     ]
     y = 4
-    def make_part_buffer(slot, part):
+    def make_part_buffer(slot, part, skip_title=False):
+        if skip_title:
+            title = ""
+        else:
+            title = "%s:" % slot.replace("_", " ").title()
         return screen.RichText(
-            "%s:\n    %s" % (slot.replace("_", " ").title(), (part.description % part.__dict__).replace("\n","\n    ")),
+            "%s\n    %s" % (title, (part.description % part.__dict__).replace("\n","\n    ")),
             x=1,y=y, wrap_to=enemy_zone.width-2
         )
 
@@ -65,10 +69,12 @@ def describe_enemy():
             enemy_zone.children.append(text_block)
             y += text_block.height
     for slot in enemy.limbs:
+        skip_title = False
         for part in enemy.parts[slot]:
-            text_block = make_part_buffer(slot, part)
+            text_block = make_part_buffer(slot, part, skip_title=skip_title)
             enemy_zone.children.append(text_block)
             y += text_block.height
+            skip_title = True
     enemy_zone.dirty = True
 
 @event.on('battle.tick')
@@ -368,7 +374,7 @@ def enemy_defeated():
 @event.on('player.defeated')
 def player_defeated():
     #THERE IS NO ESCAPE
-    message.error("You died!", flip=True)
+    message.error("You were defeated!", flip=True)
     state.mode = 'defeat'
     event.fire('defeat.start')
     raise state.StateChanged()
