@@ -98,7 +98,7 @@ parts = {
     ],
         
     'body': [
-        Part("Human Torso", "A perfectly %(adjective)s human torso", "human", hp=10, evasion=-8),
+        Part("Human Torso", "A perfectly %(adjective)s human torso", "human", hp=10),
         #Part("Strong Human Torso", "A muscular human torso", "human", hp=1),
         Part("Beastly Torso", "A great, furry, %(adjective)s body, rippling with muscle", "animal", hp=8, damage_bonus=2),
         Part("Avian Body", "An agile, %(adjective)s body", "avian", accuracy_bonus=2, evasion=2),

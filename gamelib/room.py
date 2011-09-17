@@ -64,6 +64,7 @@ class Tile:
         self.char = char
 
     def clear(self):
+        self.monster = False
         self.passable = True
         self.char = ' '
         self.picked_up = True

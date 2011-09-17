@@ -79,6 +79,7 @@ def describe_enemy():
 
 @event.on('battle.tick')
 def battle_tick():
+    player.update_player_statblock(state.player)
     log.debug("in tick, delays are %r and %r", state.player.cur_tick_delay, enemy.cur_tick_delay)
     while state.player.cur_tick_delay and enemy.cur_tick_delay:
         log.debug("spending tick")
@@ -378,6 +379,8 @@ def enemy_defeated():
 @event.on('player.defeated')
 def player_defeated():
     #THERE IS NO ESCAPE
+    player.update_player_statblock(state.player)
+    draw_battle()
     message.error("You were defeated!", flip=True)
     state.mode = 'defeat'
     event.fire('defeat.start')

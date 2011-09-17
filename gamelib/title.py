@@ -40,10 +40,9 @@ def start_defeat():
 @event.on('defeat.prompt')
 def defeat_prompt():
     import message
-    while True:
-        event.fire('flip')
-        key = term.getkey()
-        if key == 'down':
-            message.scroll_message(rel=-1)
-        if key == 'up':
-            message.scroll_message(rel=1)
+    key = term.getkey()
+    if key == 'down':
+        message.scroll_message(rel=-1)
+    if key == 'up':
+        message.scroll_message(rel=1)
+        
