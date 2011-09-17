@@ -119,10 +119,22 @@ class Player(Humanoid):
         self.parts['left_arm'] = [parts.by_name['Human Arm']]
         self.parts['right_arm'] = [parts.by_name['Human Arm']]
 
+    def ask_user(self):
+        while True:
+            key = term.getkey()
+            if key not in ('y', 'Y', 'n', 'N'):
+                message.error("Please choose 'Y' or 'N'", flip=True)
+                continue
+            if key in ('y', 'Y'):
+                return True
+            if key in ('n', 'N'):
+                return False
+                    
     def mutate(self):
         #find something new
         log.debug("Mutating!")
         message.add("<MAGENTA>The curse of Melimnor twists your body!", flip=True)
+        vetos = 0
         while True:
             slot = random.choice(self.slots + self.limbs)
             part = self.random_part(slot)
@@ -140,8 +152,20 @@ class Player(Humanoid):
                 if old_part and part.name == old_part.name:
                     #that wouldn't be much of a mutation
                     continue
-
-            break
+            
+            #ask if they want it - if they can
+            if vetos >= self.found_artifacts:
+                #too bad!
+                break
+            message.add("<GREEN>Your <LIGHTGREEN>Melimnarian Artifact</> glows with power!")
+            message.add("<WHITE>Do you accept a <LIGHTMAGENTA>%s</>? (Y/N)" % part.name, flip=True)
+            if self.ask_user():
+                message.add("<WHITE>You have accepted the <LIGHTMAGENTA>%s</>." % part.name, flip=True)
+                break
+            else:
+                message.add("<WHITE>You force the magical curse to try again.", flip=True)
+                vetos += 1
+                
         #set it
         log.debug("Chose a %r part %r", slot, part.name)
         if slot in self.limbs:
@@ -149,13 +173,15 @@ class Player(Humanoid):
             self.parts[slot][idx] = part
         else:
             self.parts[slot] = part
+        
         #tell them about it            
         slot_name = slot.replace("_", " ").title()
         if old_part:
             message.add("<LIGHTMAGENTA>Your %s mutates into a %s!" % (slot_name, part.name), flip=True)
         else:
             message.add("<LIGHTMAGENTA>A %s sprouts from your %s!" % (part.name, slot_name), flip=True)
-
+        
+        message.newline(flip=True)
         self.calc_stats()
 
     def add_limb(self):
@@ -250,11 +276,11 @@ class Enemy(Humanoid):
         dur, chosen_attack = max([((attacks[0].cooldown + ((len(attacks) - 1)*2)), attacks) for attacks in available_attacks.values()])
         return chosen_attack
 
+import state, term
 @event.on('setup')
 def setup_player_statblock():
     global statblock
     import screen
-    import state, term
         
     conf = state.config
     statblock = screen.make_box(
