@@ -13,6 +13,7 @@ class Humanoid:
     base_hp = 20
     bonus_hp = 30
     quest_accuracy_bonus = 0
+    quest_armor = 0
 
     slots = [
         'head',
@@ -34,7 +35,7 @@ class Humanoid:
 
     def calc_stats(self):
         self.hp = self.base_hp + self.bonus_hp
-        self.armor = 0
+        self.armor = self.quest_armor
         self.evasion = 10
         self.damage_bonus = 0
         self.accuracy_bonus = self.quest_accuracy_bonus
@@ -105,6 +106,8 @@ class Player(Humanoid):
     name = "Player"
     found_artifacts = 0
     losses = 0
+    quest_accuracy_bonus = 2
+    quest_armor = 1
     def __init__(self, *args, **kwargs):
         Humanoid.__init__(self, *args, **kwargs)
         self.reset_body()

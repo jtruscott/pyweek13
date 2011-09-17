@@ -8,6 +8,7 @@ log = logging.getLogger('room')
 class Tile:
     passable = True
     door = False
+    boss_door = False
     warp = False
     is_pickup = False
     picked_up = False
@@ -41,11 +42,19 @@ class Tile:
             else:
                 self.is_pickup = True
                 self.pickup_type = 'key'
+        if char == 'M':
+            #M for Multiple Limbs
+            self.is_pickup = True
+            self.pickup_type = 'limb'
+
         if char == '\x9b':
             #F7 in Set 5 in tundra
             #Cent symbol, used as an artifact of power
             self.is_pickup = True
             self.pickup_type = 'macguffin'
+        if char == '\xe9':
+            #boss-key door
+            self.boss_door = True
 
         if char == 'E':
             #E for Enemy!
@@ -146,6 +155,8 @@ class Room:
             state.after_battle_tile = tile
             state.after_battle_pos = (px, py)
             raise state.StateChanged()
+        elif tile.boss_door and not state.found_key:
+            message.add("<LIGHTRED>You need a boss key to pass through this door.", flip=True)
 
         elif tile.passable:
             if tile.is_pickup and not tile.picked_up:
@@ -160,6 +171,9 @@ class Room:
                 if tile.pickup_type == "key":
                     message.add("<GREEN>You found a <LIGHTGREEN>Boss Key</>!", flip=True)
                     state.found_key = True
+                if tile.pickup_type == "limb":
+                    message.add("<GREEN>You found an <LIGHTGREEN>Orb Of Shiva</>!", flip=True)
+                    state.player.add_limb()
 
                 if tile.pickup_type == "macguffin":
                     message.add("<GREEN>You found a <LIGHTGREEN>Melimnerian Artifact</>!", flip=True)
