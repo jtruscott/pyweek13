@@ -1,2 +1,38 @@
-Code for a PyWeek 13 entry, by a team of two.
-Theme: Mutate!
+Mutants Of Melimnor
+===============
+
+Entry in PyWeek #13  <http://www.pyweek.org/13/>
+Team: Placeholder
+Members: Rectifier, BurritoAlPastor
+
+
+DEPENDENCIES:
+
+You might need to install some of these before running the game:
+
+  Python:     http://www.python.org/
+  PyGame:     http://www.pygame.org/ (Optional, only needed for sound)
+
+
+
+RUNNING THE GAME:
+
+On Windows or Mac OS X, locate the "run_game.py" file and double-click it.
+
+Othewise open a terminal / console and "cd" to the game directory and run:
+
+  python run_game.py
+
+
+
+HOW TO PLAY THE GAME:
+
+Press Enter at the title screen.
+
+Move with the arrow keys.
+Page Up / Page Down / Home / End to scroll the message log.
+Enter at prompts.
+
+
+LICENSE:
+BSD
