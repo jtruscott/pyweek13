@@ -11,13 +11,29 @@ attack_tiers=[t0_attack, t1_attack, t2_attack, t3_attack, t4_attack]
 
 def power_calc(numdice, dietype, damage, speed, name):
     # (1 + N)*(N/2)
-    avg_die_value = ((1+dietype)*(dietype/2.0))  #average result of one die of dietype
+    avg_die_value = ((1+dietype)*(dietype/2.0)/dietype)  #average result of one die of dietype
+    
+    if __name__ == "__main__":
+        print 'numdice ' + str(numdice)
+        print 'dietype ' + str(dietype)
+        print 'avg die value ' + str(avg_die_value)
+    
     avg_dmg = ((avg_die_value * numdice) + damage)
+    
+    if __name__ == "__main__":
+        print 'avg dmg' + str(avg_dmg)
+    
     dpt = (avg_dmg / speed)
+    
+    if __name__ == "__main__":
+        print 'dpt' + str(dpt)
+        
+    print "seperator \n"
+    
     i = len(attack_tiers)-1
     if __name__ != "__main__":
-        if dpt > 50:
-            log.debug("greater than 50 dpt error in" + name)
+        if dpt > 5:
+            log.debug("greater than 5 dpt error in" + name)
     while i >= 0:
         
         if dpt > attack_tiers[i]:
@@ -26,6 +42,9 @@ def power_calc(numdice, dietype, damage, speed, name):
         if i < 0:
             log.debug("less than 0 dpt error in" + name)
             return 0
+    
+        
+
             
 class Attack:
     name = "Attack"
@@ -165,7 +184,7 @@ if __name__ == "__main__":
     foo = StabAttack(dietype=8,attacktext="%(owner)s stabs at %(target)s with a great scorpion tail!")
     print foo.cooldown
     print foo.power
-    foo = StabAttack(dietype=90,numdice=50,)
+    foo = StabAttack(dietype=2,numdice=6,)
     print foo.cooldown
     print foo.power
     print t0_attack, t1_attack, t2_attack, t3_attack, t4_attack

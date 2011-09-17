@@ -150,7 +150,7 @@ parts = {
         #Part("Strong Human Torso", "A muscular human torso", "human", hp=1),
         Part("Beastly Torso", "A great, furry, %(adjective)s body, rippling with muscle", "animal", hp=8, damage_bonus=2),
         Part("Avian Body", "An agile, %(adjective)s body", "avian", accuracy_bonus=2, evasion=2),
-        Part("Scaled Torso", "A %(adjective)s torso covered in thick, durable scales", "fish", armor=3, hp=5),
+        Part("Scaled Torso", "A %(adjective)s torso covered in thick, durable scales", "fish", armor=3, hp=8),
         Part("Feathered Torso", "A great ursine torso with feathers on it.\nWait, what bears have feathers?", "animal", hp=25, armor=2),
     ],
         
@@ -165,14 +165,15 @@ parts = {
         Part("Octopoid Legs", "Eight %(adjective)s tentacles, where legs should be", "ceph", hp=10,
              attack=BeatAttack()),
         Part("Bear Legs", "A particularly stocky pair of ursine legs", "animal", hp=30, armor=1),
-        #Part("Helicopter Legs", "A great helicopter propellor where a lower torso should be")
+        #Part("Helicopter Legs", "A great helicopter propeller where a lower torso should be", evasion=3,
+         #    attack=SlashAttack()
         
     ],
         
     'tail': [
         Part("Basic Thagomizer", "An articulated tail with a wicked array of pointy bits and bony\ngrowths at the end.", "animal", armor=1, hp=2,
              attack=BeatAttack(attacktext="%(owner)s thagomizes %(target)s mightily!", dietype=8)),
-        Part("Prehensile Tail", "A flexible, $(adjective)s tail that helps provide balance.", "animal", evasion=2),
+        Part("Prehensile Tail", "A flexible, %(adjective)s tail that helps provide balance.", "animal", evasion=2),
         Part("Scorpion Stinger", "An armored tail with a great, wicked stinger.", "bug", armor=1,
              attack=StabAttack(dietype=8,attacktext="%(owner)s stabs at %(target)s with a great scorpion tail!", numdice=2)),
     ],
