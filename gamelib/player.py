@@ -309,14 +309,17 @@ class Boss(Enemy):
 
 class OwlbearBoss(Boss):
     name = "Owlbear"
-    def generate_body(self, **kwargs):
-        self.parts['head'] = parts.by_name['Human Head']
-        self.parts['body'] = parts.by_name['Human Torso']
-        self.parts['legs'] = parts.by_name['Human Legs']
-        self.parts['back'] = None
-        self.parts['tail'] = None
-        self.parts['left_arm'] = [parts.by_name['Human Arm']]
-        self.parts['right_arm'] = [parts.by_name['Human Arm']]
+    def generate_body(self, *args, **kwargs):
+        self.parts['head'] = parts.get_part(parts.by_name['Owl Head'])
+        self.parts['body'] = parts.get_part(parts.by_name['Feathered Torso'])
+        self.parts['legs'] = parts.get_part(parts.by_name['Bear Legs'])
+
+        self.parts['left_arm'] = [
+                parts.get_part(parts.by_name['Feathered Arm'])
+        ]
+        self.parts['right_arm'] = [
+                parts.get_part(parts.by_name['Feathered Arm'])
+        ]
 
 
 import state, term
