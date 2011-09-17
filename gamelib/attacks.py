@@ -3,7 +3,7 @@ from math import floor
 
 #these are MINIMUM values for attacks in their associated brackets
 global t0_attack, t1_attack, t2_attack, t3_attack, t4_attack, attack_tiers
-[t0_attack, t1_attack, t2_attack, t3_attack, t4_attack] = [1,10,20,30,40]
+[t0_attack, t1_attack, t2_attack, t3_attack, t4_attack] = [0,1,2,3,4]
 attack_tiers=[t0_attack, t1_attack, t2_attack, t3_attack, t4_attack]
 
 def power_calc(numdice, dietype, damage, speed, name):
@@ -109,62 +109,53 @@ class Attack:
 
 class PunchAttack(Attack):
     name = "Punch"
-    base_numdice = 1
-    base_dietype = 4
-    base_cooldown = 1
-    base_speed = 4
     sound = 'punch'
+    base_numdice = 1
+    base_dietype = 6
+    base_speed = 4
     
 class BiteAttack(Attack):
     name = "Bite"
     base_numdice = 1
     base_dietype = 6
-    base_cooldown = 1
-    base_speed = 5
+    base_speed = 4
     
 class EnergyAttack(Attack):
     name = "Fry"
-    base_numdice = 4
-    base_dietype = 3
-    base_cooldown = 5
-    base_speed = 2
     sound = 'fry'
+    base_numdice = 1
+    base_dietype = 6
+    base_speed = 4
 
 class StabAttack(Attack):
     name = "Stab"
     base_numdice = 1
-    base_dietype = 4
-    base_cooldown = 3
+    base_dietype = 6
     base_speed = 4
     
 class BladeAttack(Attack):
     name = "Slash"
     base_numdice = 1
-    base_dietype = 4
-    base_cooldown = 2
-    base_speed = 3
+    base_dietype = 6
+    base_speed = 4
     
 class BeatAttack(Attack):
     name = "Bludgeon"
     base_numdice = 1
-    base_dietype = 4
-    base_cooldown = 3
+    base_dietype = 6
     base_speed = 4
     
 class TrampleAttack(Attack):
     name = "Trample"
-    base_numdice = 4
-    base_dietype = 3
-    base_cooldown = 4
+    base_numdice = 1
+    base_dietype = 6
     base_speed = 4
     
 class ClawAttack(Attack):
     name = "Rend"
     base_numdice = 1
     base_dietype = 6
-    base_cooldown = 1
-    base_speed = 3
-    
+    base_speed = 4    
     
 if __name__ == "__main__":
     foo = StabAttack(dietype=8,attacktext="%(owner)s stabs at %(target)s with a great scorpion tail!")

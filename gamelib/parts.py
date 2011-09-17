@@ -8,6 +8,13 @@ log = logging.getLogger('parts')
 #dictionary of name:part for lookups
 by_name = {}
 
+def d_power_calc(hp, armor, evasion):
+    hp_coeff = 1
+    armor_coeff = 4
+    evasion_coeff = 2
+    power = (hp * hp_coeff) + (armor * armor_coeff) + (evasion * evasion_coeff)
+    return power
+
 words = {
     "human":["mundane", "boring", "uninteresting", "ordinary", "human"],
     "bug": ["insectoid", "buglike", "arachnidan", "vespine", "wasplike", "myrmecine", "antlike", "chitinous", "exoskeletal"],
@@ -59,10 +66,15 @@ class Part:
         #register ourselves
         by_name[name] = self
         
+        self.defense_power = d_power_calc(self.hp, self.armor, self.evasion)
+        
         if attack is not None:
-            self.power = attack.power
+            if self.defense_power > 0:
+                self.power = (max(attack.power, self.defense_power)+1)
+            else:
+                self.power = attack.power
         else:
-            self.power = 0      #this is temporary
+            self.power = self.defense_power
         
 
     def add_bonus(self, target):
@@ -119,7 +131,8 @@ parts = {
         Part("Animalistic Head", "A stout, %(adjective)s face, with eyes full of killing instinct", "animal", damage_bonus=2),
         Part("Fanged Head", "An enormous, %(adjective)s head, with compound eyes and sharp\nmandibles that drip venom", "bug",
              attack=BiteAttack()),
-        Part("Teleporter-Accident Head", "A grotesque, %(adjective)s head like a fly, with enormous sets of\ncompound eyes and a proboscis", "bug", evasion=2, accuracy_bonus=1),
+        Part("Teleporter-Accident Head", "A grotesque, %(adjective)s head like a fly, with enormous sets of\ncompound eyes and a proboscis", "bug",
+             evasion=2, accuracy_bonus=1),
         Part("Beaked Head", "A furtive, %(adjective)s head, with a great, sharp beak", "avian", evasion=1,
              attack=BiteAttack(speed=-1, attacktext="%(owner)s tries to pluck out the eyes of %(target)s with a great beak!")),
         Part("Shark Head", "A fearsome, %(adjective)s head, with multiple rows of sharp, ripping\nteeth", "fish",
@@ -142,10 +155,10 @@ parts = {
         Part("Beastly Biped Legs", "A pair of great, furry, %(adjective)s legs.", "animal", hp=5, armor=1),
         Part("Mutantaur Legs", "A matched set of four hoofed %(adjective)s legs.", "animal", armor=2,
              attack=TrampleAttack(attacktext="%(owner)s tries to trample %(target)s) in a flurry of hooves!")),
-        Part("Chicken Legs", "You ever notice that bird legs are actually kinda freaky?\nEspecially when they're human-sized.", "avian",
+        Part("Chicken Legs", "A pair of alarmingly oversized %(owner)s legs, with talons", "avian",
              evasion=1, armor=1, hp=2, attack=ClawAttack(attacktext="%(owner)s tries to scratch %(target)s with great oversided chicken legs!", damage=-2)),
-        Part("Arachnid Legs", "Two legs are better than one; eight legs are SIGNIFICANTLY better\nthan two.", "bug"),
-        Part("Octopoid Legs", "What's better than eight legs? Eight TENTACLES!", "ceph", hp=10,
+        Part("Arachnid Legs", "A quadrapedal array of four %(adjective)s legs", "bug"),
+        Part("Octopoid Legs", "Eight %(adjective)s tentacles, where legs should be", "ceph", hp=10,
              attack=BeatAttack())
     ],
         
@@ -158,12 +171,13 @@ parts = {
     ],
 
     'limbs': [
-        Part("Human Arm", "A perfectly %(adjective)s human arm", "human", attack=PunchAttack()),
+        Part("Human Arm", "A perfectly %(adjective)s human arm", "human",
+             attack=PunchAttack(attacktext="%(owner)s flails pathetically at %(target)s with a measly human fist!")),
         #Part("Strong Human Arm", "A very strong human arm", "human", attack=PunchAttack(damage=1)),
         Part("Beast Limb", "A powerfuly muscled, %(adjective)s limb, ending in sharp claws", "animal",
-             attack=ClawAttack(attacktext="%(owner)s rends %(target)s with a sharp claw!")),
+             attack=ClawAttack(attacktext="%(owner)s rends %(target)s with a sharp claw!"), damage=1),
         Part("Bird Limb", "A lean, %(adjective)s limb, ending in sharp claws", "avian",
-             attack=ClawAttack(speed=-1,damage=-2,attacktext="%(owner)s scratches %(target)s with a deft claw!")),
+             attack=ClawAttack(speed=-1,attacktext="%(owner)s scratches %(target)s with a deft claw!")),
         Part("Chitinous Claw", "A dark-colored, %(adjective)s pinching claw", "bug", armor=1,
              attack=ClawAttack(damage=2,attacktext="%(owner)s tries to grab tight with a great scorpionlike claw!")),
         Part("Crab Claw", "An oversized orange crustacean claw.", "fish", armor=1, hp=2,
