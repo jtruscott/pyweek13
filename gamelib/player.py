@@ -89,7 +89,7 @@ class Humanoid:
     def random_part(self, slot):
         if slot in self.limbs:
             slot = 'limbs'
-        return random.choice(parts.parts[slot])
+        return parts.get_part(random.choice(parts.parts[slot]))
 
     def add_part(self, slot, part):
         log.debug("adding a %r part: %r", slot, part.name)
@@ -111,14 +111,14 @@ class Player(Humanoid):
         update_player_statblock(self)
 
     def reset_body(self):
-        self.parts['head'] = parts.by_name['Human Head']
-        self.parts['body'] = parts.by_name['Human Torso']
-        self.parts['legs'] = parts.by_name['Human Legs']
+        self.parts['head'] = parts.get_part(parts.by_name['Human Head'])
+        self.parts['body'] = parts.get_part(parts.by_name['Human Torso'])
+        self.parts['legs'] = parts.get_part(parts.by_name['Human Legs'])
         #self.parts['back'] = None
         self.parts['tail'] = None
 
-        self.parts['left_arm'] = [parts.by_name['Human Arm']]
-        self.parts['right_arm'] = [parts.by_name['Human Arm']]
+        self.parts['left_arm'] = [parts.get_part(parts.by_name['Human Arm'])]
+        self.parts['right_arm'] = [parts.get_part(parts.by_name['Human Arm'])]
 
     def ask_user(self):
         while True:
@@ -220,11 +220,11 @@ class Enemy(Humanoid):
         log.debug("Generating class-%i enemy", monster_level)
         #start off human-like
         base_parts = {
-            'head': parts.by_name['Human Head'],
-            'body': parts.by_name['Human Torso'],
-            'legs': parts.by_name['Human Legs'],
-            'left_arm': parts.by_name['Human Arm'],
-            'right_arm': parts.by_name['Human Arm'],
+            'head': parts.get_part(parts.by_name['Human Head']),
+            'body': parts.get_part(parts.by_name['Human Torso']),
+            'legs': parts.get_part(parts.by_name['Human Legs']),
+            'left_arm': parts.get_part(parts.by_name['Human Arm']),
+            'right_arm': parts.get_part(parts.by_name['Human Arm']),
             'tail': None
         }
         #determine how mutated to be

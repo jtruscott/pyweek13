@@ -56,7 +56,8 @@ class Attack:
                 numdice=None, dietype=None, damage=0,
                 accuracy=0, status=None,
                 cooldown=None, speed=0,
-                attacktext="%(owner)s attacks %(target)s with an unhandled exception!"
+                attacktext="%(owner)s attacks %(target)s with an unhandled exception!",
+                cls=None
                 ):
         '''
         numdice and dietype are signed ints which replace, but do not modify, the base XdY damage of the attack;
