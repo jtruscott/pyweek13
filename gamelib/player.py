@@ -135,6 +135,7 @@ class Player(Humanoid):
         log.debug("Mutating!")
         message.add("<MAGENTA>The curse of Melimnor twists your body!", flip=True)
         vetos = 0
+        last_vetoed = None
         while True:
             slot = random.choice(self.slots + self.limbs)
             part = self.random_part(slot)
@@ -142,6 +143,12 @@ class Player(Humanoid):
             if 'Human' in part.name:
                 #can never go back, buddy
                 continue
+                
+            if part.name == last_vetoed:
+                #don't reroll the same part that was just vetoed
+                #(cycles are totally okay)
+                continue
+
             if slot in self.limbs:
                 old_part = random.choice(self.parts[slot])
                 if part.name == old_part.name:
@@ -165,6 +172,7 @@ class Player(Humanoid):
             else:
                 message.add("<WHITE>You force the magical curse to try again.", flip=True)
                 vetos += 1
+                last_vetoed = part.name
                 
         #set it
         log.debug("Chose a %r part %r", slot, part.name)

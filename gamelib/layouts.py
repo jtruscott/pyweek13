@@ -67,11 +67,20 @@ class Layout:
         new_px = old_room.player_x
         new_py = old_room.player_y
         if x != 0:
-            log.debug('flipping x: %r - %r', old_room.buf.width,old_room.player_x)
-            new_px = old_room.buf.width - old_room.player_x
+            log.debug('moving x: old=%r',old_room.player_x)
+            if old_room.player_x < old_room.width/2:
+                #they were on the left, put them on the right
+                #note that we use -3 because there's a weirdness in map width
+                new_px = new_room.width - 3
+            else:
+                new_px = 2
         else:
-            log.debug('flipping y: %r - %r', old_room.buf.height,old_room.player_y)
-            new_py = old_room.buf.height - old_room.player_y
+            log.debug('moving y: old=%r',old_room.player_y)
+            if old_room.player_y < old_room.height/2:
+                #they were on the top, put them on the bottom
+                new_py = new_room.height - 2
+            else:
+                new_py = 2
         
         new_room.move_player(new_px, new_py)
         self.curr_room = new_room
