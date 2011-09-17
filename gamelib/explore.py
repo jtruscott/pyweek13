@@ -1,4 +1,5 @@
 import event, message, term, state, screen, room, layouts
+import sound
 
 import logging
 log = logging.getLogger('explore')
@@ -31,13 +32,34 @@ def draw_explore():
 
     action_zone.draw()
 
-    
+def add_room_messages():
+    messages = level.layout.curr_room.explore_messages
+    y = 1
+    x = 1
+    texts = []
+    for message in messages:
+        text = screen.RichText(message, x=x, y=y, wrap_to=action_zone.width-2)
+        texts.append(text)
+        y += text.height + 1
+    action_zone.children = texts
+    action_zone.dirty = True
+
 @event.on('explore.start')
 def start_explore():
+    sound.play('appear')
     level.layout = layouts.start_layout
     level.layout.setup()
+    add_room_messages()
 
     state.player.explore_reset()
+    message.add("""
+<LIGHTGREY>This is the cursed isle of <WHITE>Melimnor</>,
+spoke of in legend to be rife with hideous,
+deformed, and unnatural creatures.</>
+
+By some horrible luck, you find yourself on
+it's shores. It is eerily quiet here.
+""")
 
 @event.on('explore.resume')
 def resume_explore():
@@ -88,11 +110,14 @@ def level_prompt():
             log.debug("action: %r, args: %r", action, args)
             if action == 'changeroom':
                 level.layout.change_room(*args)
+                add_room_messages()
                 draw_explore()
             elif action == 'changelevel':
                 log.debug("changing level")
                 level.layout = layouts.random_layout()
+                add_room_messages()
                 draw_explore()
+                message.add("<LIGHTRED>The stairs vanish behind you!")
     
     return
 

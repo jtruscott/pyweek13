@@ -49,6 +49,7 @@ class Room:
     player_x = -1
     player_y = -1
     player_color = term.WHITE
+    explore_messages = []
     def __init__(self, name, buf, prop=None):
         self.name = name
         self.buf = buf
@@ -145,4 +146,15 @@ def create_room(name, **kwargs):
     
     room = Room(name, buf, **kwargs)
     room.move_player(room.start_x,room.start_y)
+    #add some fluff
+    if name == "beach.ans":
+        room.explore_messages = [
+        "<LIGHTBLUE>You are surrounded by water, with no other islands anywhere on the horizon",
+        "<YELLOW>There is a faded trail leading off to the east."
+        ]
+    if name == "ruins.ans":
+        room.explore_messages = [
+        "<YELLOW>The trail leads to a massive shrine of unknown origin.",
+        "<WHITE>In the center of the shrine is a chasm with stairs leading down...",
+        ]
     return room

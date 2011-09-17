@@ -35,12 +35,6 @@ def setup_message_ui():
     zone_title.x = (M.message_zone.width - len(zone_title.message)) / 2
     M.message_zone.children.append(zone_title)
 
-    add_message("This is an incredibly long line" + "abcdefg " * 12)
-
-@event.on('battle.tick')
-def tmp():
-    add_message("oh my god!")
-
 @event.on('battle.draw')
 @event.on('explore.draw')
 def draw_message_log():
@@ -97,7 +91,7 @@ def calc_offset(off):
 
 def add_message(message, flip=False):
     log.debug("adding message: %r", message)
-    rt = screen.RichText(message, x=1, wrap_to=M.text_width)
+    rt = screen.RichText(message, x=0, wrap_to=M.text_width)
     M.messages.append(rt)
     M.scroll_offset = calc_offset(len(M.messages) - M.text_height)
     if flip:
