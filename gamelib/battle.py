@@ -369,5 +369,6 @@ def enemy_defeated():
 def player_defeated():
     #THERE IS NO ESCAPE
     message.error("You died!", flip=True)
-    state.mode = 'explore'
-    event.fire('explore.start')
+    state.mode = 'title'
+    event.fire('title.draw')
+    raise state.StateChanged()

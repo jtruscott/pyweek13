@@ -81,7 +81,7 @@ groups = {
     #mapping of map "names" to one or more files in data/ which count
     
     #general tiles
-    'e': None,
+    'e': ['e-1.ans'],
     'w': None,
     'n': None,
 
@@ -107,8 +107,8 @@ dungeon_layouts = [
         [None,       'n,boss','n,key'],
     ]),
 
-    Layout([
-    ]),
+    #Layout([
+    #]),
 ]
 
 

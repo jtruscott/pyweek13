@@ -42,7 +42,7 @@ def start_explore():
 @event.on('explore.resume')
 def resume_explore():
     state.after_battle_tile.clear()
-    level.room.move_player(*state.after_battle_pos)
+    level.layout.curr_room.move_player(*state.after_battle_pos)
 
 @event.on('explore.tick')
 def explore_tick():
@@ -78,14 +78,20 @@ def level_prompt():
         elif key == 'right':
             ret = level.layout.curr_room.try_move(x=+1)
         
+        log.debug('ret: %r', ret)
         if not ret:
             continue
         elif ret is True:
             return
         else:
             action, args = ret
+            log.debug("action: %r, args: %r", action, args)
             if action == 'changeroom':
                 level.layout.change_room(*args)
+                draw_explore()
+            elif action == 'changelevel':
+                log.debug("changing level")
+                level.layout = layouts.random_layout()
                 draw_explore()
     
     return

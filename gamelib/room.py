@@ -87,9 +87,11 @@ class Room:
         if tile.door:
             message.add("<YELLOW>You enter the next room.", flip=True)
             return ("changeroom", (x, y))
+
         elif tile.warp:
             message.add("<YELLOW>You descend into the darkness.", flip=True)
-            return ("changelevel", None)
+            return ("changelevel", (None,))
+
         elif tile.char == 'F':
             message.add("<LIGHTRED>HOLY TOLEDO! ITS A MONSTER!", flip=True)
             state.mode = 'battle'
