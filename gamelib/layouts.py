@@ -88,7 +88,7 @@ groups = {
     'ws': None,
     
     'wse': ['wse-1.ans'],
-    'nse': None,
+    'nse': ['nse-1.ans'],
 
     #special tiles
     'beach': ['beach.ans'],

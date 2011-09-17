@@ -165,13 +165,13 @@ class Room:
         )
 
 
-def create_room(name, **kwargs):
+def create_room(name, prop):
     log.debug("Creating room: %r", name)
     filename = os.path.join('data','maps',name)
     f = open(filename)
     buf = ansiparse.read_to_buffer(f, width=state.config.viewport_width-2, max_height=state.config.viewport_height-2, crop=True)
     
-    room = Room(name, buf, **kwargs)
+    room = Room(name, buf, prop)
     room.move_player(room.start_x,room.start_y)
     #add some fluff
     if name == "beach.ans":
@@ -193,4 +193,17 @@ def create_room(name, **kwargs):
         "<LIGHTGREEN>This room is terrifyingly unnatural.",
         "<LIGHTMAGENTA>Your sanity begs you to leave quickly.",
         ]
+    if name == 'w-1.ans':
+        room.explore_messages = [
+        "<LIGHTGREY>This appears to be the remains of an ancient prison",
+        ]
+    if name == 'nse-1.ans':
+        room.explore_messages = [
+        "<LIGHTGREY>Flooding has taken over much of this cavern.",
+        ]
+    #prop messages
+    if prop == 'key':
+        room.explore_messages.append(
+        "<YELLOW>There is a key in this room!"
+        )
     return room
