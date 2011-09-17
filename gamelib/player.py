@@ -7,6 +7,7 @@ log = logging.getLogger('player')
 
 class Humanoid:
     name = "Humanoid"
+    cur_hp = 0
     base_hp = 20
     bonus_hp = 0
     quest_accuracy_bonus = 0
@@ -100,8 +101,8 @@ class Humanoid:
 
 class Player(Humanoid):
     name = "Player"
-    cur_hp = 0
     found_artifacts = 0
+    losses = 0
     def __init__(self, *args, **kwargs):
         Humanoid.__init__(self, *args, **kwargs)
         self.reset_body()
@@ -342,14 +343,15 @@ def setup_player_statblock():
         screen.RichText(x=1, y=2, message="HP: <%s>%i<LIGHTGREY> / <WHITE>%i</>"),
         screen.RichText(x=1, y=3, message="Armor:   <WHITE>%i</>"),
         screen.RichText(x=1, y=4, message="Evasion: <WHITE>%i</>"),
-        screen.RichText(x=1, y=5, message="+Atk:   <WHITE>%i</>"),
-        screen.RichText(x=1, y=6, message="+Dmg:   <WHITE>%i</>"),
+        screen.RichText(x=1, y=5, message="+Atk:    <WHITE>%i</>"),
+        screen.RichText(x=1, y=6, message="+Dmg:    <WHITE>%i</>"),
+        screen.RichText(x=1, y=8, message="Defeats: <WHITE>%i</>"),
     ]
 
 def update_player_statblock(player):
     global statblock
 
-    name, hp, armor, evasion, atk, dmg = statblock.children
+    name, hp, armor, evasion, atk, dmg, defeats = statblock.children
     
     hp_color = 'LIGHTRED'
     hp_pct = float(player.cur_hp) / player.hp
@@ -364,4 +366,5 @@ def update_player_statblock(player):
     evasion.format((player.evasion))
     atk.format((player.accuracy_bonus))
     dmg.format((player.damage_bonus))
+    defeats.format((player.losses))
     statblock.dirty = True

@@ -41,10 +41,10 @@ def start_battle(monster_properties=2):
         enemy = player.OwlbearBoss()
     else:
         enemy = player.Enemy(monster_level=monster_properties)
-    describe_enemy()
 
     state.player.battle_reset()
     enemy.battle_reset()
+    describe_enemy()
 
     list_player_attacks()
     selected_attack_index = 0
@@ -52,7 +52,7 @@ def start_battle(monster_properties=2):
 
 def describe_enemy():
     enemy_zone.children = [
-        screen.RichText("Before you is a %s with %i hp!" % (enemy.name, enemy.hp), x=1, y=2, wrap_to=enemy_zone.width-2),
+        screen.RichText("Before you is a %s with <WHITE>%i</> of %i hp!" % (enemy.name, enemy.cur_hp, enemy.hp), x=1, y=2, wrap_to=enemy_zone.width-2),
     ]
     y = 4
     def make_part_buffer(slot, part, skip_title=False):
@@ -97,6 +97,7 @@ def battle_tick():
         attacks = enemy.do_action()
         if attacks:
             resolve_attack(attacks, enemy, state.player)
+    describe_enemy()
     return
 
 @event.on('battle.prompt')
@@ -384,9 +385,11 @@ def enemy_defeated():
 @event.on('player.defeated')
 def player_defeated():
     #THERE IS NO ESCAPE
+    state.player.losses += 1
     player.update_player_statblock(state.player)
     draw_battle()
     message.error("You were defeated!", flip=True)
-    state.mode = 'defeat'
-    event.fire('defeat.start')
+    message.error("You narrowly escape death", flip=True)
+    state.mode = 'explore'
+    event.fire('explore.resume', defeated=True)
     raise state.StateChanged()

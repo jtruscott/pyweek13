@@ -67,10 +67,14 @@ it's shores. It is eerily quiet here.
 """)
 
 @event.on('explore.resume')
-def resume_explore():
-    state.after_battle_tile.clear()
+def resume_explore(defeated=False):
+    if defeated:
+        level.layout.curr_room.buf.dirty = True
+    else:
+        state.after_battle_tile.clear()
+        level.layout.curr_room.move_player(*state.after_battle_pos)
     state.player.reset_hp()
-    level.layout.curr_room.move_player(*state.after_battle_pos)
+    player.update_player_statblock(state.player)
     action_zone.dirty = True
     for child in action_zone.children:
         child.dirty = True
@@ -97,10 +101,10 @@ def level_prompt():
         if key == 'enter':
             return
         
-        elif key == 'f3':
+        elif key == 'f3' and False:
             #TAKE ME OUT BEFORE RELEASE
             state.player.mutate()
-        elif key == 'f4':
+        elif key == 'f4' and False:
             #TAKE ME OUT BEFORE RELEASE
             state.player.add_limb()
 
