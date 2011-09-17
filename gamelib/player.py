@@ -143,7 +143,7 @@ class Player(Humanoid):
             if 'Human' in part.name:
                 #can never go back, buddy
                 continue
-                
+
             if part.name == last_vetoed:
                 #don't reroll the same part that was just vetoed
                 #(cycles are totally okay)
@@ -208,15 +208,15 @@ class Player(Humanoid):
 
 class Enemy(Humanoid):
     name = "Mutant"
-    def __init__(self, flag=None, *args, **kwargs):
+    def __init__(self, monster_level=None, *args, **kwargs):
         Humanoid.__init__(self, *args, **kwargs)
-        self.generate_body(flag)
+        self.generate_body(monster_level)
         self.calc_stats()
 
         self.reset_status()
 
-    def generate_body(self, flag):
-        log.debug("Generating %s-class enemy", flag)
+    def generate_body(self, monster_level):
+        log.debug("Generating class-%i enemy", monster_level)
         #start off human-like
         base_parts = {
             'head': parts.by_name['Human Head'],
@@ -224,28 +224,34 @@ class Enemy(Humanoid):
             'legs': parts.by_name['Human Legs'],
             'left_arm': parts.by_name['Human Arm'],
             'right_arm': parts.by_name['Human Arm'],
+            'tail': None
         }
         #determine how mutated to be
-        #note that max_extra_limbs is randomly subsetted again
-        mutation_count = 3
-        max_extra_limbs = 0
-        if flag == 'super_easy':
+        mutation_count = 0
+        extra_limbs = 0
+
+        if monster_level == 0:
             mutation_count = 1
-        elif flag == 'easy':
-            mutation_count = 2
-        elif flag == 'jesus_christ':
-            mutation_count = len(base_parts)
-            max_extra_limbs = 6
+            max_extra_limbs = 0
+            monster_level = 1
         else:
-            mutation_count = random.randint(0, len(base_parts)-1)
-            max_extra_limbs = random.randint(0,4)
+            mutation_count = monster_level + 2
+            extra_limbs = max(0, random.randint(monster_level - 2, monster_level + 1))
+
 
         #do some mutatin'
         for i in range(mutation_count):
-            slot = random.choice(base_parts.keys())
-            part = self.random_part(slot)
+            while True:
+                slot = random.choice(base_parts.keys())
+                part = self.random_part(slot)
+                if part.power == 0 or part.power > monster_level or part.power < monster_level-1:
+                    log.debug("skipping a %r, power = %r and level = %r",part.name, part.power, monster_level)
+                    continue
+                break
+
             log.debug("mutating the %r into a %r", slot, part.name)
             self.add_part(slot, part)
+
             #take it out of the base_parts set so we don't re-mutate the same component
             del base_parts[slot]
         
@@ -254,10 +260,14 @@ class Enemy(Humanoid):
             self.add_part(slot, part)
 
         #do some farm-fresh limb growin'
-        extra_limbs = random.randint(0, max_extra_limbs)
         log.debug("adding %r extra limbs", extra_limbs)
-        for i in range(max_extra_limbs):
-            new_limb = self.random_part('limbs')
+        for i in range(extra_limbs):
+            while True:
+                new_limb = self.random_part('limbs')
+                if new_limb.power == 0 or new_limb.power > monster_level or new_limb.power < monster_level-1:
+                        log.debug("skipping a %r limb, power = %r and level = %r", new_limb.name, new_limb.power, monster_level)
+                        continue
+                break
             slot = random.choice(['left_arm', 'right_arm'])
             log.debug("adding a %r to the %r", new_limb.name, slot)
             self.parts[slot].append(new_limb)
@@ -283,6 +293,21 @@ class Enemy(Humanoid):
         #build a list of (duration, combo) so we can use max() to find the slowest one
         dur, chosen_attack = max([((attacks[0].cooldown + ((len(attacks) - 1)*2)), attacks) for attacks in available_attacks.values()])
         return chosen_attack
+
+class Boss(Enemy):
+    name = "Boss"
+
+class OwlbearBoss(Boss):
+    name = "Owlbear"
+    def generate_body(self, **kwargs):
+        self.parts['head'] = parts.by_name['Human Head']
+        self.parts['body'] = parts.by_name['Human Torso']
+        self.parts['legs'] = parts.by_name['Human Legs']
+        self.parts['back'] = None
+        self.parts['tail'] = None
+        self.parts['left_arm'] = [parts.by_name['Human Arm']]
+        self.parts['right_arm'] = [parts.by_name['Human Arm']]
+
 
 import state, term
 @event.on('setup')

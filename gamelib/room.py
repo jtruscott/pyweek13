@@ -1,6 +1,6 @@
 import event, state, screen, term, message, player
 import ansiparse
-import os
+import os, random
 
 import logging
 log = logging.getLogger('room')
@@ -53,15 +53,27 @@ class Tile:
             #Others = Totally Random
             self.monster = True
             if fg == term.LIGHTGREEN:
-                #Lightgreen = Super Easy (1 non-human part, two limbs)
-                self.monster_properties = 'super_easy'
+                #Lightgreen = Super Easy
+                self.monster_properties = 0
+
             elif fg == term.GREEN:
-                #Green = Easy (2 non-human parts, two limbs)
-                self.monster_properties = 'easy'
-            elif fg == term.LIGHTRED:
-                self.monster_properties = 'jesus_christ'
+                #Green = Easy
+                self.monster_properties = 1
+
+            elif fg == term.LIGHTMAGENTA:
+                #Lightmagenta = Moderate
+                self.monster_properties = 2
+
+            elif fg == term.YELLOW:
+                self.monster_properties = 3
+
             else:
-                self.monster_properties = 'random'
+                self.monster_properties = random.randint(0,3)
+
+        if char == 'B':
+            self.monster = True
+            if fg == term.YELLOW:
+                self.monster_properties = 'owlbear'
 
 
 

@@ -35,9 +35,12 @@ def draw_battle():
 
     
 @event.on('battle.start')
-def start_battle(enemy_flag='random'):
+def start_battle(monster_properties=2):
     global enemy, selected_attack_index
-    enemy = player.Enemy(flag=enemy_flag)
+    if monster_properties == 'owlbear':
+        enemy = player.OwlbearBoss()
+    else:
+        enemy = player.Enemy(monster_level=monster_properties)
     describe_enemy()
 
     state.player.battle_reset()
