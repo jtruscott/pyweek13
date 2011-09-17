@@ -144,12 +144,18 @@ class Room:
                     state.player.cur_hp += 1
                     state.player.hp += 1
                     player.update_player_statblock(state.player)
+
                 if tile.pickup_type == "key":
                     message.add("<GREEN>You found a <LIGHTGREEN>Boss Key</>!", flip=True)
                     state.found_key = True
+
                 if tile.pickup_type == "macguffin":
+                    message.add("<GREEN>You found a <LIGHTGREEN>Melimnerian Artifact</>!", flip=True)
+                    message.add("<GREEN>These powerful wards give you some control\nover the magical curse of Melimnor.", flip=True)
                     state.player.quest_accuracy_bonus += 1
                     state.player.found_artifacts += 1
+                    state.player.calc_stats()
+                    player.update_player_statblock(state.player)
                 tile.clear()
 
             self.move_player(px, py)
