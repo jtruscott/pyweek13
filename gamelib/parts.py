@@ -33,9 +33,14 @@ class Part:
     def __init__(self, name, description, theme,
                     hp=0, armor=0, evasion=0,
                     damage_bonus=0, accuracy_bonus=0, proc_chance_bonus=0,
-                    attack=None, dire=False
+                    attack=None
                 ):
-        #"dire" means that the part is scaled for use in the final everything-goes floor
+        #"power" reflects the power of the part - it's the general difficulty notation.
+        #power=0 is reserved for human parts. other parts come in values of 1-4.
+        #remember you can fine-tune overall power of a monster within a range
+        #via assigning the power of each part randomly from a list of, say, [0,1] or even [0,0,0,1]
+        #as a general guideline, monsters should have a number of limbs equal to 2 + their power;
+        #in the case of mixed-power monsters, the number of limbs is left as an exercise to the map designer.
         #themes are as follows: human, bug, avian, animal, fish, ceph (for cepholopoidial), robo, bio, fire, storm, stone
         
         self.name = name
@@ -50,11 +55,14 @@ class Part:
         self.proc_chance_bonus = proc_chance_bonus
         
         self.attack = attack
-        
-        self.dire = dire
 
         #register ourselves
         by_name[name] = self
+        
+        if attack is not None:
+            self.power = attack.power
+        else:
+            self.power = 0      #this is temporary
         
 
     def add_bonus(self, target):
@@ -81,6 +89,31 @@ Exceptions are for types human, ceph, and fire, which have character widths of 6
 '''
 
 parts = {
+    '''
+    Let's talk about power scaling.
+    
+    A part should grant attacks, give defenses, or do both.
+    As follows, here are the ranges of values of HP for parts that grant defense, by power rating;
+    a point of DR is worth four points of HP.
+    Power   HP
+    0       0
+    1       10
+    2       25
+    3       40
+    4       55
+    
+    Here are the ranges of attack values for parts that grant defense, in average damage per tick (discounting cooldown)
+    Power   DPT
+    0       <10
+    1       >=10
+    2       >=20
+    3       >=30
+    4       >=40
+    
+    Cooldowns should, as a baseline, be dietype PLUS numdice, divided by 4 (or some other number, as defined in attacks),
+    rounded down. This will be the default value without any additional input.
+    '''
+    
     'head': [
         Part("Human Head", "A perfectly %(adjective)s human head", "human",),
         Part("Beast Head", "A long, %(adjective)s snout, full of sharp teeth", "animal",
@@ -141,3 +174,8 @@ parts = {
              attack=BeatAttack(attacktext="%(owner)s tries to attack %(target)s with an enormous tentacle! But in a totally non-sexual way.", damage=1)),
     ]
 }
+
+if __name__ == "__main__":
+    from random import choice
+    foo = random.choice(parts["limbs"])
+    print foo.power
