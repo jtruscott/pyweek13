@@ -9,7 +9,7 @@ class Humanoid:
     name = "Humanoid"
     cur_hp = 0
     base_hp = 20
-    bonus_hp = 0
+    bonus_hp = 30
     quest_accuracy_bonus = 0
 
     slots = [
