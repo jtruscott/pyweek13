@@ -94,6 +94,7 @@ class Part:
     def battle_tick(self):
         if self.attack:
             self.attack.battle_tick()
+            log.debug("battle_tick: %r %r", self.name, self.attack.cur_cooldown)
 
 '''
 Text descriptions should be no wider than 68 characters in width before \n.

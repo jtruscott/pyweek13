@@ -1,6 +1,9 @@
 import random
 from math import floor
 
+import logging
+log = logging.getLogger('attacks')
+
 #these are MINIMUM values for attacks in their associated brackets
 global t0_attack, t1_attack, t2_attack, t3_attack, t4_attack, attack_tiers
 [t0_attack, t1_attack, t2_attack, t3_attack, t4_attack] = [0,1,2,3,4]
@@ -93,6 +96,7 @@ class Attack:
     def battle_tick(self):
         if self.cur_cooldown:
             self.cur_cooldown -= 1
+            log.debug("new cooldown: %r", self.cur_cooldown)
         
     def calc_min_damage(self, owner):
         return self.numdice + self.damage + owner.damage_bonus

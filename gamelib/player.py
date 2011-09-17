@@ -79,6 +79,7 @@ class Humanoid:
         if self.cur_tick_delay:
             self.cur_tick_delay -= 1
         for part in self.all_parts():
+            log.debug("ticking on %r", self.name)
             part.battle_tick()
 
     def take_damage(self, damage):
@@ -241,10 +242,13 @@ class Enemy(Humanoid):
 
         #do some mutatin'
         for i in range(mutation_count):
-            while True:
+            for attempt in range(20):
                 slot = random.choice(base_parts.keys())
                 part = self.random_part(slot)
-                if part.power == 0 or part.power > monster_level or part.power < monster_level-1:
+                if part.power > monster_level or part.power < monster_level-1:
+                    if attempt >= 19:
+                        log.debug("forced to accept a %r, power = %r and level = %r",part.name, part.power, monster_level)
+                        break
                     log.debug("skipping a %r, power = %r and level = %r",part.name, part.power, monster_level)
                     continue
                 break
@@ -257,16 +261,21 @@ class Enemy(Humanoid):
         
         #put the regular, unmutated bits in
         for slot, part in base_parts.items():
+            if not part:
+                continue
             self.add_part(slot, part)
 
         #do some farm-fresh limb growin'
         log.debug("adding %r extra limbs", extra_limbs)
         for i in range(extra_limbs):
-            while True:
+            for attempt in range(20):
                 new_limb = self.random_part('limbs')
-                if new_limb.power == 0 or new_limb.power > monster_level or new_limb.power < monster_level-1:
-                        log.debug("skipping a %r limb, power = %r and level = %r", new_limb.name, new_limb.power, monster_level)
-                        continue
+                if new_limb.power > monster_level or new_limb.power < monster_level-1:
+                    if attempt >= 19:
+                        log.debug("forced to accept a %r limb, power = %r and level = %r", new_limb.name, new_limb.power, monster_level)
+                        break
+                    log.debug("skipping a %r limb, power = %r and level = %r", new_limb.name, new_limb.power, monster_level)
+                    continue
                 break
             slot = random.choice(['left_arm', 'right_arm'])
             log.debug("adding a %r to the %r", new_limb.name, slot)
@@ -279,6 +288,7 @@ class Enemy(Humanoid):
 
         min_delay = min([attack.cur_cooldown for attack in all_attacks])
         if min_delay:
+            log.debug("cooldowns: %r", [(attack.name, attack.cur_cooldown) for attack in all_attacks])
             message.add("<DARKGREY>%s delays for %i" % (self.name, min_delay))
             self.cur_tick_delay = min_delay
             return

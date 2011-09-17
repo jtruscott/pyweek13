@@ -344,7 +344,7 @@ def resolve_attack(attacks, owner, target):
             message.add(" <LIGHTGREEN>Hit!  %s" % accuracy_text)
             damage_roll = attack.calc_damage(owner)
             damage_mod = attack.damage + owner.damage_bonus
-            damage = max(0, damage_roll + damage_mod - target.armor)
+            damage = max(1, damage_roll + damage_mod - target.armor)
             armor_penalty_text = target.armor and ("<RED>%+i</>" % -target.armor) or ""
             message.add(" <LIGHTGREY>%s<DARKGREY> takes <LIGHTRED>%i</> damage! (<GREEN>%i</><BROWN>%+i</>%s)" % (
                                     target.name, damage, damage_roll, damage_mod, armor_penalty_text))
