@@ -86,15 +86,12 @@ class Part:
 Text descriptions should be no wider than 68 characters in width before \n.
 Because "%(adjective)s" is as long as most of the adjective words, character counts can be done including those as-is.
 Exceptions are for types human, ceph, and fire, which have character widths of 66, 67, and 66 again, respectively.
-'''
 
-parts = {
-    '''
-    Let's talk about power scaling.
+Let's talk about power scaling.
     
-    A part should grant attacks, give defenses, or do both.
-    As follows, here are the ranges of values of HP for parts that grant defense, by power rating;
-    a point of DR is worth four points of HP.
+A part should grant attacks, give defenses, or do both.
+As follows, here are the ranges of values of HP for parts that grant defense, by power rating;
+a point of DR is worth four points of HP.
     Power   HP
     0       0
     1       10
@@ -102,7 +99,7 @@ parts = {
     3       40
     4       55
     
-    Here are the ranges of attack values for parts that grant defense, in average damage per tick (discounting cooldown)
+Here are the ranges of attack values for parts that grant defense, in average damage per tick (discounting cooldown)
     Power   DPT
     0       <10
     1       >=10
@@ -110,10 +107,11 @@ parts = {
     3       >=30
     4       >=40
     
-    Cooldowns should, as a baseline, be dietype PLUS numdice, divided by 4 (or some other number, as defined in attacks),
-    rounded down. This will be the default value without any additional input.
-    '''
-    
+Cooldowns should, as a baseline, be dietype PLUS numdice, divided by 4 (or some other number, as defined in attacks),
+rounded down. This will be the default value without any additional input.
+'''
+parts = {
+
     'head': [
         Part("Human Head", "A perfectly %(adjective)s human head", "human",),
         Part("Beast Head", "A long, %(adjective)s snout, full of sharp teeth", "animal",

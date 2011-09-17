@@ -20,6 +20,10 @@ class config:
 player = None
 found_key = False
 
+#global mod for power scaling
+global difficulty_level
+difficulty_level = 0
+
 class StateChanged(Exception):
     """
         raise this to bubble all the way back to
