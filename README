@@ -11,11 +11,28 @@ DEPENDENCIES:
 You might need to install some of these before running the game:
 
   Python:     http://www.python.org/
+  WConio:     http://newcenturycomputers.net/projects/wconio.html (Windows)
   PyGame:     http://www.pygame.org/ (Optional, only needed for sound)
 
 
-
 RUNNING THE GAME:
+
+    PLEASE NOTE:
+        This game is very sensitive to your terminal configuration!
+        Windows Users:
+            Please use the "Raster Fonts" font. (Right-click the terminal title bar, Properties, Fonts)
+            Choose the "8 x 12" font size.
+            Other fonts lead to rendering errors.
+
+        Linux/Mac Users:
+            Make sure your terminal is set to UTF-8.
+            Your terminal will need to be at least 121x61 or the game will abort.
+            If at all possible, use a font with characters that are 8 x 12 pixels, or have a similar
+            aspect ratio.
+
+            Some fonts misrender the "full-square" block characters and leave a pixel of background behind.
+            Try to use a different one if yours does this.
+            
 
 On Windows or Mac OS X, locate the "run_game.py" file and double-click it.
 
