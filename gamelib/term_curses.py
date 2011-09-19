@@ -170,3 +170,4 @@ def raw_getkey():
             return esc.key
     if key == 'c':
         key = '\x03'
+    return key

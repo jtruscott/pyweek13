@@ -80,8 +80,8 @@ class Tile:
                 self.monster_properties = random.randint(0,3)
 
         if char == 'B':
-            self.monster = True
             if fg == term.YELLOW:
+                self.monster = True
                 self.monster_properties = 'owlbear'
 
 
